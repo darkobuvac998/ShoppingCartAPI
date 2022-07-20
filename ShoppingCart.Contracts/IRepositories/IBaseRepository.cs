@@ -13,6 +13,5 @@ namespace ShoppingCart.Contracts.IRepositories
         Task<ICollection<T>> FindAllAsync(bool trackChanges);
         Task<ICollection<T>> FindByConditionAsync(Expression<Func<T, bool>> expression, bool trackChanges);
         Task CreateAsync(T entity);
-        Task DeleteAsync(T entity);
     }
 }

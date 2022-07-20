@@ -41,7 +41,7 @@ namespace ShoppingCart.API.Controllers
         [HttpPost("submit")]
         public async Task SubmitCart(int cartId)
         {
-            // TODO: Data preparation and sending goes here
+            // TODO: Data preparation and sending goes here.
         }
     }
 }

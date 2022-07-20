@@ -20,11 +20,6 @@ namespace ShoppingCart.Repositories
 
         public void Delete(T entity) => dbContext.Set<T>().Remove(entity);
 
-        public Task DeleteAsync(T entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public ICollection<T> FindAll(bool trackChanges) => trackChanges ? dbContext.Set<T>().ToList() : dbContext.Set<T>().AsNoTracking().ToList();
 
         public async Task<ICollection<T>> FindAllAsync(bool trackChanges) => 

@@ -14,8 +14,8 @@ namespace ShoppingCart.Entities.Configuration
                     {
                         CartId = 1,
                         Status = CartStatus.Draft,
-                        TimeCreated = DateTime.UtcNow,
-                        TimeUpdated = DateTime.UtcNow,
+                        TimeCreated = DateTime.Now,
+                        TimeUpdated = DateTime.Now,
                         CreatedBy = "User 1"
                     },
                     new Cart
@@ -23,16 +23,32 @@ namespace ShoppingCart.Entities.Configuration
                         CartId = 2,
                         Status = CartStatus.Draft,
                         CreatedBy = "User 2",
-                        TimeUpdated = DateTime.UtcNow,
-                        TimeCreated = DateTime.UtcNow,
+                        TimeUpdated = DateTime.Now,
+                        TimeCreated = DateTime.Now,
                     },
                     new Cart
                     {
                         CartId = 3,
-                        Status = CartStatus.Draft,
+                        Status = CartStatus.Submited,
                         CreatedBy = "User 3",
-                        TimeUpdated = DateTime.UtcNow,
-                        TimeCreated = DateTime.UtcNow,
+                        TimeUpdated = DateTime.Now,
+                        TimeCreated = DateTime.Now,
+                    },
+                    new Cart
+                    {
+                        CartId = 4,
+                        Status = CartStatus.Cancelled,
+                        CreatedBy = "User 1",
+                        TimeUpdated = DateTime.Now,
+                        TimeCreated = DateTime.Now,
+                    },
+                    new Cart
+                    {
+                        CartId = 5,
+                        Status = CartStatus.Cancelled,
+                        CreatedBy = "User 1",
+                        TimeUpdated = DateTime.Now,
+                        TimeCreated = DateTime.Now,
                     }
                 );
         }

@@ -2,6 +2,7 @@
 using ShoppingCart.Contracts.IRepositories;
 using ShoppingCart.Contracts.IServices;
 using ShoppingCart.Entities.DTOs.CartItem;
+using ShoppingCart.Entities.Models;
 
 namespace ShoppingCart.Services
 {
@@ -16,6 +17,27 @@ namespace ShoppingCart.Services
             mapper = autoMapper;
         }
 
+        public async Task<CartItemDto?> AddCartItemAsync(CartItemCreationDto cartItemDto, int cartId)
+        {
+            var cart = await repositoryManager.Carts.GetCartAsync(cartId, false);
+            if (cart == null)
+            {
+                return null;
+            }
+
+            var cartItem = mapper.Map<CartItem>(cartItemDto);
+            cartItem.CartId = cartId;
+            cartItem.TimeCreated = DateTime.Now;
+            cartItem.TimeUpdated = DateTime.Now;
+
+            await repositoryManager.CartItems.CreateAsync(cartItem);
+            await repositoryManager.SaveAsync();
+
+            var cartDtoResult = mapper.Map<CartItemDto>(cartItem);
+
+            return cartDtoResult;
+        }
+
         public async Task<CartItemDto?> GetCartItemAsync(int cartId, int itemId, bool trackChanges)
         {
             var cartItem = await repositoryManager.CartItems.GetCartItemAsync(cartId, itemId, trackChanges);
@@ -23,6 +45,16 @@ namespace ShoppingCart.Services
             var cartItemDto = mapper.Map<CartItemDto>(cartItem);
 
             return cartItemDto;
+        }
+
+        public async Task RemoveCartItemAsync(int cartId, int itemId)
+        {
+            var item = await repositoryManager.CartItems.GetCartItemAsync(cartId, itemId, true);
+            if (item != null)
+            {
+                repositoryManager.CartItems.Delete(item);
+                await repositoryManager.SaveAsync();
+            }
         }
     }
 }

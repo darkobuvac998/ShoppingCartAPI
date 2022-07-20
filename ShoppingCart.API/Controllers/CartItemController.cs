@@ -1,10 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Contracts.IServices;
-using ShoppingCart.Entities.Data;
 using ShoppingCart.Entities.DTOs.CartItem;
-using ShoppingCart.Entities.Models;
 
 namespace ShoppingCart.API.Controllers
 {
@@ -12,14 +8,10 @@ namespace ShoppingCart.API.Controllers
     [ApiController]
     public class CartItemController : ControllerBase
     {
-        private readonly ShoppingCartDatabaseContext dbContext;
-        private readonly IMapper mapper;
         private readonly IServiceManager service;
 
-        public CartItemController(ShoppingCartDatabaseContext context, IMapper autoMapper, IServiceManager serviceManager)
+        public CartItemController(IServiceManager serviceManager)
         {
-            dbContext = context;
-            mapper = autoMapper;
             service = serviceManager;
         }
 
@@ -52,41 +44,25 @@ namespace ShoppingCart.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var cart = await dbContext.Carts.FindAsync(cartId);
-            if (cart == null)
+            var result = await service.CartItemService.AddCartItemAsync(cartItemDto, cartId);
+
+            if (result != null)
+            {
+                return CreatedAtRoute("GetCartItem", new { cartId = cartId, itemId = result?.CartItemId }, result);
+            }
+            else
             {
                 return NotFound();
             }
 
-            var cartItem = mapper.Map<CartItem>(cartItemDto);
-            cartItem.CartId = cartId;
-            cartItem.TimeCreated = DateTime.UtcNow;
-            cartItem.TimeUpdated = DateTime.UtcNow;
-
-            await dbContext.CartItems.AddAsync(cartItem);
-            await dbContext.SaveChangesAsync();
-
-            var cartDtoResult = mapper.Map<CartItemDto>(cartItem);
-
-            return CreatedAtRoute("GetCartItem", new { cartId = cartId, itemId = cart.CartId }, cartDtoResult);
         }
 
         [HttpDelete("{itemId:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteCartItem(int cartId, int itemId)
         {
-            var item = await dbContext.CartItems.Where(i => i.CartId == cartId && i.CartItemId == itemId).FirstOrDefaultAsync();
-            if (item == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                dbContext.CartItems.Remove(item);
-                await dbContext.SaveChangesAsync();
-                return NoContent();
-            }
+            await service.CartItemService.RemoveCartItemAsync(cartId, itemId);
+            return NoContent();
         }
     }
 }

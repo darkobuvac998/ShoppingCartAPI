@@ -2,7 +2,7 @@
 
 namespace ShoppingCart.Contracts.IRepositories
 {
-    public interface ICartItemRepository
+    public interface ICartItemRepository : IBaseRepository<CartItem>
     {
         Task<CartItem?> GetCartItemAsync(int cartId, int itemId, bool trackChanges);
     }

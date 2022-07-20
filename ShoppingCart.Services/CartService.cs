@@ -23,7 +23,7 @@ namespace ShoppingCart.Services
             if (cart != null)
             {
                 cart.Status = CartStatus.Cancelled;
-                cart.TimeUpdated = DateTime.Now;  
+                cart.TimeUpdated = DateTime.Now;
                 repositoryManager.Carts.Update(cart);
                 await repositoryManager.SaveAsync();
             }
