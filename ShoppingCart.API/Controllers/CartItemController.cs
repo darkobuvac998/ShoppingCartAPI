@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Contracts.IServices;
 using ShoppingCart.Entities.DTOs.CartItem;
 
@@ -6,6 +7,7 @@ namespace ShoppingCart.API.Controllers
 {
     [Route("api/Cart/{cartId:int}/[controller]")]
     [ApiController]
+    [Authorize(Policy = "FullAccess")]
     public class CartItemController : ControllerBase
     {
         private readonly IServiceManager service;
@@ -16,6 +18,7 @@ namespace ShoppingCart.API.Controllers
         }
 
         [HttpGet("{itemId:int}", Name = "GetCartItem")]
+        [Authorize(Policy = "ReadAccess")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCartItem(int cartId, int itemId)

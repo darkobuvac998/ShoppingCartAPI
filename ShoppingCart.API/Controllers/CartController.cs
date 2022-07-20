@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Contracts.IServices;
 
 namespace ShoppingCart.API.Controllers
 {
     [Route("api/[controller]/{cartId:int}")]
     [ApiController]
+    [Authorize(Policy = "FullAccess")]
     public class CartController : ControllerBase
     {
         private readonly IServiceManager service;
@@ -15,6 +17,7 @@ namespace ShoppingCart.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "ReadAccess")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
