@@ -6,7 +6,6 @@ namespace ShoppingCart.API.Controllers
 {
     [Route("api/[controller]/{cartId:int}")]
     [ApiController]
-    [Authorize(Policy = "FullAccess")]
     public class CartController : ControllerBase
     {
         private readonly IServiceManager service;
@@ -33,15 +32,17 @@ namespace ShoppingCart.API.Controllers
         }
 
         [HttpPut("cancel")]
+        [Authorize(Policy = "FullAccess")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CancelCart(int cartId)
         {
-            await service.CartService.CancelCart(cartId);
-            return Ok();
+            await service.CartService.CancelCartAsync(cartId);
+            return NoContent();
         }
 
         [HttpPost("submit")]
+        [Authorize(Policy = "FullAccess")]
         public async Task SubmitCart(int cartId)
         {
             // TODO: Data preparation and sending goes here.

@@ -9,11 +9,13 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ShoppingCart.Database", "Sh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCart.Entities", "ShoppingCart.Entities\ShoppingCart.Entities.csproj", "{DCCAEB97-787B-4D03-95CD-E49218CFC24A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCart.Services", "ShoppingCart.Services\ShoppingCart.Services.csproj", "{C53DDDE7-C6B3-4E8D-84F4-0CA7112D2E27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCart.Services", "ShoppingCart.Services\ShoppingCart.Services.csproj", "{C53DDDE7-C6B3-4E8D-84F4-0CA7112D2E27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCart.Contracts", "ShoppingCart.Contracts\ShoppingCart.Contracts.csproj", "{01103BD3-A7A3-4E26-89B9-6BA69AEC65ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCart.Contracts", "ShoppingCart.Contracts\ShoppingCart.Contracts.csproj", "{01103BD3-A7A3-4E26-89B9-6BA69AEC65ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCart.Repositories", "ShoppingCart.Repositories\ShoppingCart.Repositories.csproj", "{7538F4B1-35B0-42FD-B7EE-E27967E97B9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCart.Repositories", "ShoppingCart.Repositories\ShoppingCart.Repositories.csproj", "{7538F4B1-35B0-42FD-B7EE-E27967E97B9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCart.Tests", "ShoppingCart.Tests\ShoppingCart.Tests.csproj", "{EE6208D4-CEE6-47C2-BB5D-C3CB966D7ABD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{7538F4B1-35B0-42FD-B7EE-E27967E97B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7538F4B1-35B0-42FD-B7EE-E27967E97B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7538F4B1-35B0-42FD-B7EE-E27967E97B9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE6208D4-CEE6-47C2-BB5D-C3CB966D7ABD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE6208D4-CEE6-47C2-BB5D-C3CB966D7ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE6208D4-CEE6-47C2-BB5D-C3CB966D7ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE6208D4-CEE6-47C2-BB5D-C3CB966D7ABD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

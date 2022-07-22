@@ -34,14 +34,21 @@ namespace ShoppingCart.API.Extensions
                 options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
-            {
-                options.Authority = $"https://{configuration["Auth0:Domain"]}";
-                options.Audience = configuration["Auth0:Audience"];
-
-                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    RoleClaimType = "http://demozero.net/roles"
-                };
+                    options.Authority = $"https://{configuration["Auth0:Domain"]}";
+                    options.Audience = configuration["Auth0:Audience"];
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            RoleClaimType = "http://demozero.net/roles",
+                            NameClaimType = "Roles",
+                            ValidateLifetime = true,
+                            ValidAudience = configuration["Auth0:Audience"],
+                            ValidateAudience = true,
+                            ValidIssuer = $"https://{configuration["Auth0:Domain"]}",
+                            ValidateIssuer = true,
+                            ClockSkew = TimeSpan.Zero
+                        };
             });
         }
 

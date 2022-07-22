@@ -7,7 +7,6 @@ namespace ShoppingCart.API.Controllers
 {
     [Route("api/Cart/{cartId:int}/[controller]")]
     [ApiController]
-    [Authorize(Policy = "FullAccess")]
     public class CartItemController : ControllerBase
     {
         private readonly IServiceManager service;
@@ -33,6 +32,7 @@ namespace ShoppingCart.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "FullAccess")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -61,6 +61,7 @@ namespace ShoppingCart.API.Controllers
         }
 
         [HttpDelete("{itemId:int}")]
+        [Authorize(Policy = "FullAccess")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteCartItem(int cartId, int itemId)
         {

@@ -33,14 +33,19 @@ namespace ShoppingCart.Services
             await repositoryManager.CartItems.CreateAsync(cartItem);
             await repositoryManager.SaveAsync();
 
-            var cartDtoResult = mapper.Map<CartItemDto>(cartItem);
+            var cartItemDtoResult = mapper.Map<CartItemDto>(cartItem);
 
-            return cartDtoResult;
+            return cartItemDtoResult;
         }
 
         public async Task<CartItemDto?> GetCartItemAsync(int cartId, int itemId, bool trackChanges)
         {
             var cartItem = await repositoryManager.CartItems.GetCartItemAsync(cartId, itemId, trackChanges);
+
+            if(cartItem == null)
+            {
+                return null;
+            }
 
             var cartItemDto = mapper.Map<CartItemDto>(cartItem);
 

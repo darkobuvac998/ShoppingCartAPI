@@ -17,7 +17,7 @@ namespace ShoppingCart.Services
             mapper = autoMapper;
         }
 
-        public async Task CancelCart(int cartId)
+        public async Task CancelCartAsync(int cartId)
         {
             var cart = await repositoryManager.Carts.GetCartAsync(cartId, true);
             if (cart != null)
@@ -29,10 +29,13 @@ namespace ShoppingCart.Services
             }
         }
 
-        public async Task<CartDto> GetCartAsync(int cartId, bool trackChanges)
+        public async Task<CartDto?> GetCartAsync(int cartId, bool trackChanges)
         {
             var cart = await repositoryManager.Carts.GetCartAsync(cartId, trackChanges);
-
+            if(cart == null)
+            {
+                return null;
+            }
             var cartDto = mapper.Map<CartDto>(cart);
 
             return cartDto;
