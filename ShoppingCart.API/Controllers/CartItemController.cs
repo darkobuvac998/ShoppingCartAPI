@@ -20,9 +20,10 @@ namespace ShoppingCart.API.Controllers
         [Authorize(Policy = "ReadAccess")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetCartItem(int cartId, int itemId)
+        public async Task<IActionResult> GetCartItemAsync(int cartId, int itemId)
         {
             var item = await service.CartItemService.GetCartItemAsync(cartId, itemId, false);
+            var name = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "https://example.com/email")?.Value;
 
             if (item == null)
             {
@@ -36,7 +37,7 @@ namespace ShoppingCart.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddCartItem([FromBody] CartItemCreationDto cartItemDto, int cartId)
+        public async Task<IActionResult> AddCartItemAsync([FromBody] CartItemCreationDto cartItemDto, int cartId)
         {
             if (cartItemDto == null)
             {
@@ -63,7 +64,7 @@ namespace ShoppingCart.API.Controllers
         [HttpDelete("{itemId:int}")]
         [Authorize(Policy = "FullAccess")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteCartItem(int cartId, int itemId)
+        public async Task<IActionResult> RemoveCartItemAsync(int cartId, int itemId)
         {
             await service.CartItemService.RemoveCartItemAsync(cartId, itemId);
             return NoContent();

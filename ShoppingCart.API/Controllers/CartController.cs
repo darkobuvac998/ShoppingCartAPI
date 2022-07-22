@@ -21,7 +21,7 @@ namespace ShoppingCart.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetCart(int cartId)
+        public async Task<IActionResult> GetCartAsync(int cartId)
         {
             var cart = await service.CartService.GetCartAsync(cartId, false);
             if (cart == null)
@@ -35,7 +35,7 @@ namespace ShoppingCart.API.Controllers
         [Authorize(Policy = "FullAccess")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> CancelCart(int cartId)
+        public async Task<IActionResult> CancelCartAsync(int cartId)
         {
             await service.CartService.CancelCartAsync(cartId);
             return NoContent();

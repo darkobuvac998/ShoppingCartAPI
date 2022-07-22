@@ -25,7 +25,7 @@ namespace ShoppingCart.Tests
         public async Task AddCartItemAsync_ShouldReturnCreatedCartItem_WhenCartExists()
         {
             // Arrange
-            var cartId = 1;
+            var cartId = It.IsAny<int>();
             var cart = new Cart
             {
                 CartId = cartId,
@@ -57,7 +57,7 @@ namespace ShoppingCart.Tests
                 Description = "Desc 1",
                 Name = "Item 1",
                 CartId = cartId,
-                CartItemId = 1,
+                CartItemId = It.IsAny<int>(),
                 TimeCreated = DateTime.Now,
                 TimeUpdated = DateTime.Now
             };
@@ -73,8 +73,8 @@ namespace ShoppingCart.Tests
 
             // Assert
             Assert.Equal(cartId, cartItem.CartId);
-            Assert.Equal(DateTime.Now.ToString("HH:mm:ss"), cartItem.TimeCreated.ToString("HH:mm:ss"));
-            Assert.Equal(DateTime.Now.ToString("HH:mm:ss"), cartItem.TimeUpdated.ToString("HH:mm:ss"));
+            Assert.Equal(DateTime.Now.ToString("HH:mm"), cartItem.TimeCreated.ToString("HH:mm"));
+            Assert.Equal(DateTime.Now.ToString("HH:mm"), cartItem.TimeUpdated.ToString("HH:mm"));
             Assert.Equal(cartItemDtoResult, result);
             _repoManagerMock.Verify(v => v.CartItems.CreateAsync(cartItem), Times.Once);
             _repoManagerMock.Verify(v => v.SaveAsync(), Times.Once);
@@ -173,13 +173,10 @@ namespace ShoppingCart.Tests
         public async Task GetCartItemAsync_ShouldReturnNothing_WhenItemDoesNotExists()
         {
             // Arrange
-            var cartId = 1;
-            var cartItemId = 1;
-
-            _repoManagerMock.Setup(x => x.CartItems.GetCartItemAsync(cartId, cartItemId, false)).ReturnsAsync(() => null);
+            _repoManagerMock.Setup(x => x.CartItems.GetCartItemAsync(It.IsAny<int>(), It.IsAny<int>(), false)).ReturnsAsync(() => null);
 
             // Act
-            var result = await _sut.GetCartItemAsync(cartId, cartItemId, false);
+            var result = await _sut.GetCartItemAsync(It.IsAny<int>(), It.IsAny<int>(), false);
 
             // Assert
             Assert.Null(result);
