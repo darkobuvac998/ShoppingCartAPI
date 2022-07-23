@@ -24,4 +24,8 @@
     <ProjectReference Include="..\ShoppingCart.Services\ShoppingCart.Services.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="ShoppingCart.IntegrationTests" />
+	</ItemGroup>
+
 </Project>

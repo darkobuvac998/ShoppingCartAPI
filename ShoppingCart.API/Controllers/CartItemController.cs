@@ -23,7 +23,6 @@ namespace ShoppingCart.API.Controllers
         public async Task<IActionResult> GetCartItemAsync(int cartId, int itemId)
         {
             var item = await service.CartItemService.GetCartItemAsync(cartId, itemId, false);
-            var name = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "https://example.com/email")?.Value;
 
             if (item == null)
             {

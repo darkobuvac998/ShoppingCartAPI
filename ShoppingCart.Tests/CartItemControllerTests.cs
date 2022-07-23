@@ -45,7 +45,7 @@ namespace ShoppingCart.Tests
         }
 
         [Fact]
-        public async Task GetCartItemAsync_ShouldReturnNotFoundResult_WhenItemDoesNotExistsExists()
+        public async Task GetCartItemAsync_ShouldReturnNotFoundResult_WhenItemDoesNotExists()
         {
             // Arrange
             var cartId = It.IsAny<int>();
