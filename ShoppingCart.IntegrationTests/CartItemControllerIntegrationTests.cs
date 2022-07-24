@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
+using ShoppingCart.Entities.Constants;
 using ShoppingCart.Entities.DTOs.CartItem;
 using System;
 using System.Net;
@@ -21,7 +22,7 @@ namespace ShoppingCart.IntegrationTests
         public CartItemControllerIntegrationTests()
         {
             _factory = new CustomWebApplicationFactory<Program>();
-            _factory.UserRole = "Standard";
+            _factory.UserRole = UserRoles.Standard;
             _client = _factory.CreateClient();
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
@@ -50,7 +51,7 @@ namespace ShoppingCart.IntegrationTests
             // Arrange
             var cartId = It.IsAny<int>();
             var itemId = It.IsAny<int>();
-            _factory.UserRole = "Anonymous";
+            _factory.UserRole = null;
 
             // Act
             var response = await _client.GetAsync(ApiRoutes.Get.GetCartItemAsync(cartId, itemId));
@@ -79,7 +80,7 @@ namespace ShoppingCart.IntegrationTests
             // Arrange
             var cartId = 1;
             var itemId = 1;
-            _factory.UserRole = "Viewer";
+            _factory.UserRole = UserRoles.Viewer;
 
             // Act
             var response = await _client.GetAsync(ApiRoutes.Get.GetCartItemAsync(cartId, itemId));
@@ -187,6 +188,44 @@ namespace ShoppingCart.IntegrationTests
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
+
+        [Fact]
+        public async Task AddCartItemAsync_ShouldReturnForbiddenResult_WhenUserHasViewerRole()
+        {
+            // Arrange
+            var cartId = It.IsAny<int>();
+            var cartItemCreationDto = new CartItemCreationDto
+            {
+                Name = "Test name",
+                Amount = 2,
+                CreatedBy = "Test user", 
+                Description = "Description"
+            };
+            _factory.UserRole = UserRoles.Viewer;
+
+            var data = CreatePostRequesContent(cartItemCreationDto);
+
+            // Act
+            var response = await _client.PostAsync(ApiRoutes.Post.AddCartItemAsync(cartId), data);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+
+        [Fact]
+        public async Task RemoveCartItemAsync_ShouldReturnForbiddenResult_WhenUserHasViewerRole()
+        {
+            // Arrange
+            var cartId = It.IsAny<int>();
+            var itemId = It.IsAny<int>();
+            _factory.UserRole = UserRoles.Viewer;
+
+            // Act
+            var response = await _client.DeleteAsync(ApiRoutes.Delete.RemoveCartItemAsync(cartId, itemId));
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         private StringContent CreatePostRequesContent(object? data)

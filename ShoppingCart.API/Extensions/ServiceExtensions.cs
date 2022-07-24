@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using ShoppingCart.Contracts;
 using ShoppingCart.Contracts.IRepositories;
 using ShoppingCart.Contracts.IServices;
+using ShoppingCart.Entities.Constants;
 using ShoppingCart.Entities.Data;
 using ShoppingCart.Repositories;
 using ShoppingCart.Services;
@@ -39,25 +40,25 @@ namespace ShoppingCart.API.Extensions
                     options.Audience = configuration["Auth0:Audience"];
 
                     options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            RoleClaimType = "http://demozero.net/roles",
-                            NameClaimType = "Roles",
-                            ValidateLifetime = true,
-                            ValidAudience = configuration["Auth0:Audience"],
-                            ValidateAudience = true,
-                            ValidIssuer = $"https://{configuration["Auth0:Domain"]}",
-                            ValidateIssuer = true,
-                            ClockSkew = TimeSpan.Zero
-                        };
-            });
+                    {
+                        RoleClaimType = "http://demozero.net/roles",
+                        NameClaimType = "Roles",
+                        ValidateLifetime = true,
+                        ValidAudience = configuration["Auth0:Audience"],
+                        ValidateAudience = true,
+                        ValidIssuer = $"https://{configuration["Auth0:Domain"]}",
+                        ValidateIssuer = true,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
         }
 
         public static void ConfigureAuthorization(this IServiceCollection services)
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("FullAccess", policy => policy.RequireRole("Standard"));
-                options.AddPolicy("ReadAccess", policy => policy.RequireAssertion(ctx => ctx.User.IsInRole("Standard") || ctx.User.IsInRole("Viewer")));
+                options.AddPolicy("FullAccess", policy => policy.RequireRole(UserRoles.Standard));
+                options.AddPolicy("ReadAccess", policy => policy.RequireAssertion(ctx => ctx.User.IsInRole(UserRoles.Standard) || ctx.User.IsInRole(UserRoles.Viewer)));
             });
         }
     }

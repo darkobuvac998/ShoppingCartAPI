@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -46,7 +45,6 @@ namespace ShoppingCart.IntegrationTests
                     options.DefaultScheme = TestAuthHandler.AuthenticationScheme;
                 }).AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, options => { });
             });
-
 
             builder.ConfigureServices(services =>
             {

@@ -15,6 +15,11 @@
             public static string AddCartItemAsync(int cartId) => $"{root}/cart/{cartId}/cartItem";
         }
 
+        public static class Put
+        {
+            public static string CancelCartAsync(int cartId) => $"{root}/cart/{cartId}/cancel";
+        }
+
         public static class Delete
         {
             public static string RemoveCartItemAsync(int cartId, int itemId) => $"{root}/cart/{cartId}/cartItem/{itemId}";

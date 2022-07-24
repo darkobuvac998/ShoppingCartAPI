@@ -25,7 +25,7 @@ namespace ShoppingCart.IntegrationTests.AuthTests
             _defaultUserRole = options.CurrentValue.UserRole;
         }
 
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var claims = new List<Claim>() { new Claim(ClaimTypes.Name, "Test user") };
             if(_defaultUserRole != null)
@@ -38,7 +38,7 @@ namespace ShoppingCart.IntegrationTests.AuthTests
 
             var result = AuthenticateResult.Success(ticket);
 
-            return Task.FromResult(result);
+            return await Task.FromResult(result);
         }
     }
 }
