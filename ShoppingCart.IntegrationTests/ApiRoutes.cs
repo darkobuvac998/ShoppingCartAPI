@@ -12,7 +12,7 @@
 
         public static class Post
         {
-
+            public static string AddCartItemAsync(int cartId) => $"{root}/cart/{cartId}/cartItem";
         }
     }
 }
