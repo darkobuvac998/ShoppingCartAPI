@@ -154,7 +154,39 @@ namespace ShoppingCart.IntegrationTests
         [Fact]
         public async Task AddCartItemAsync_ShouldReturnNotFoundResult_WhenCartDoesNotExists()
         {
+            // Arrange
+            var cartId = It.IsAny<int>();
 
+            var cartItemCreationDto = new CartItemCreationDto
+            {
+                Name = "Integration test item",
+                Amount = 2,
+                CreatedBy = "Integration test user",
+                Description = "Created in integration test"
+            };
+
+            var data = CreatePostRequesContent(cartItemCreationDto);
+
+            // Act
+            var response = await _client.PostAsync(ApiRoutes.Post.AddCartItemAsync(cartId), data);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        }
+
+        [Fact]
+        public async Task RemoveCartItemAsync_ShouldReturnNoContentResult_EverytimeWhenItIsCalled()
+        {
+            // Arrange
+            var cartId = It.IsAny<int>();
+            var itemId = It.IsAny<int>();
+
+            // Act
+            var response = await _client.DeleteAsync(ApiRoutes.Delete.RemoveCartItemAsync(cartId, itemId));
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
 
         private StringContent CreatePostRequesContent(object? data)
