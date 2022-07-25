@@ -1,0 +1,75 @@
+{
+	"id": "fa69284d-2014-47ec-a4d3-088f72ed735d",
+	"name": "Testing",
+	"values": [
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "domain",
+			"value": "dev-kkj6xv7h.us.auth0.com",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "audience",
+			"value": "https://shopping-cart.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "client_id",
+			"value": "lPcLhF4fP10tdzvQeoHcI0tEOkJkoi78",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "client_secret",
+			"value": "7lUqyPBAy2TW4GF164tavBrjWfXyB0yoh3OyZa-9zP8qjh1byC40nbH2B0ApYnY3",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "grant",
+			"value": "password",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "user_password",
+			"value": "Test.12345",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "content-type",
+			"value": "application/json",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "cartId",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "cartItemId",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "jsonBody",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2022-07-25T17:53:13.545Z",
+	"_postman_exported_using": "Postman/9.25.0"
+}
