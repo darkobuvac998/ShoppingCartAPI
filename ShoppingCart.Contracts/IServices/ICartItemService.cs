@@ -6,6 +6,6 @@ namespace ShoppingCart.Contracts.IServices
     {
         Task<CartItemDto?> GetCartItemAsync(int cartId, int itemId, bool trackChanges);
         Task<CartItemDto?> AddCartItemAsync(CartItemCreationDto cartItemDto, int cartId);
-        Task RemoveCartItemAsync(int cartId, int itemId);
+        Task<bool> RemoveCartItemAsync(int cartId, int itemId);
     }
 }

@@ -44,8 +44,8 @@ namespace ShoppingCart.Entities.Data
                     .HasConstraintName("FK_CartItem_Cart");
             });
 
-            modelBuilder.ApplyConfiguration(new CartConfiguration());
-            modelBuilder.ApplyConfiguration(new CartItemConfiguration());
+            modelBuilder.ApplyConfiguration(new CartConfigurationTest());
+            modelBuilder.ApplyConfiguration(new CartItemConfigurationTest());
 
         }
     }

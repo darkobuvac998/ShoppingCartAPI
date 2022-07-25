@@ -121,13 +121,14 @@ namespace ShoppingCart.Tests
             _repoManagerMock.Setup(x => x.Carts.GetCartAsync(cartId, true)).ReturnsAsync(cart);
 
             // Act
-            await _sut.CancelCartAsync(cartId);
+            var result = await _sut.CancelCartAsync(cartId);
 
             // Assert
             _repoManagerMock.Verify(v => v.Carts.Update(cart), Times.Once);
             _repoManagerMock.Verify(v => v.SaveAsync(), Times.Once);
             Assert.Equal(CartStatus.Cancelled, cart.Status);
             Assert.Equal(DateTime.Now.ToString("HH:mm:ss"), cart.TimeUpdated.ToString("HH:mm:ss"));
+            Assert.True(result);
 
         }
 
@@ -141,10 +142,11 @@ namespace ShoppingCart.Tests
             _repoManagerMock.Setup(x => x.Carts.GetCartAsync(cartId, true)).ReturnsAsync(() => null);
 
             // Act
-            await _sut.CancelCartAsync(cartId);
+            var result = await _sut.CancelCartAsync(cartId);
 
             // Assert
             _repoManagerMock.Verify(v => v.SaveAsync(), Times.Never);
+            Assert.False(result);
         }
     }
 }

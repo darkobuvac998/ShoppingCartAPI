@@ -177,17 +177,31 @@ namespace ShoppingCart.IntegrationTests
         }
 
         [Fact]
-        public async Task RemoveCartItemAsync_ShouldReturnNoContentResult_EverytimeWhenItIsCalled()
+        public async Task RemoveCartItemAsync_ShouldReturnNoContentResult_WhenItemExists()
         {
             // Arrange
-            var cartId = It.IsAny<int>();
-            var itemId = It.IsAny<int>();
+            var cartId = 1;
+            var itemId = 1;
 
             // Act
             var response = await _client.DeleteAsync(ApiRoutes.Delete.RemoveCartItemAsync(cartId, itemId));
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
+
+        [Fact]
+        public async Task RemoveCartItemAsync_ShouldReturnBadRequestResult_WhenItemDoesNotExists()
+        {
+            // Arrange
+            var cartId = -1;
+            var itemId = -1;
+
+            // Act
+            var response = await _client.DeleteAsync(ApiRoutes.Delete.RemoveCartItemAsync(cartId, itemId));
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]

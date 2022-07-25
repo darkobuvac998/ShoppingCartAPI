@@ -37,8 +37,15 @@ namespace ShoppingCart.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CancelCartAsync(int cartId)
         {
-            await service.CartService.CancelCartAsync(cartId);
-            return NoContent();
+            var succeeded = await service.CartService.CancelCartAsync(cartId);
+            if (succeeded)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost("submit")]

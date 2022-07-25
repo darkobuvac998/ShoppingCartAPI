@@ -84,10 +84,10 @@ namespace ShoppingCart.IntegrationTests
         }
 
         [Fact]
-        public async Task CancelCartAsync_ShouldReturnNoContent_OnEveryAuthenticatedRequest()
+        public async Task CancelCartAsync_ShouldReturnNoContent_WhenCartExistsInDatabase()
         {
             // Arrange
-            var cartId = It.IsAny<int>();
+            var cartId = 1;
 
             // Act
             var response = await _client.PutAsync(ApiRoutes.Put.CancelCartAsync(cartId), null);
@@ -95,6 +95,20 @@ namespace ShoppingCart.IntegrationTests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
+
+        [Fact]
+        public async Task CancelCartAsync_ShouldReturnBadRequestResult_WhenCartDoesNotExists()
+        {
+            // Arrange
+            var cartId = -1;
+
+            // Act
+            var response = await _client.PutAsync(ApiRoutes.Put.CancelCartAsync(cartId), null);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
 
         [Fact]
         public async Task CartControllerEndpoints_ShouldReturnForbiddenResult_WhenUserDoesNotHavePermissions()

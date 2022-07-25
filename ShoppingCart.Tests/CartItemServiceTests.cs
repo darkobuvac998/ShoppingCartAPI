@@ -204,11 +204,12 @@ namespace ShoppingCart.Tests
             _repoManagerMock.Setup(x => x.CartItems.GetCartItemAsync(cartId, itemId, true)).ReturnsAsync(() => item);
 
             // Act
-            await _sut.RemoveCartItemAsync(cartId, itemId);
+            var result = await _sut.RemoveCartItemAsync(cartId, itemId);
 
             // Assert
             _repoManagerMock.Verify(v => v.CartItems.Delete(item), Times.Once);
             _repoManagerMock.Verify(v => v.SaveAsync(), Times.Once);
+            Assert.True(result);
         }
 
         [Fact]
@@ -221,10 +222,11 @@ namespace ShoppingCart.Tests
             _repoManagerMock.Setup(x => x.CartItems.GetCartItemAsync(cartId, itemId, true)).ReturnsAsync(() => null);
 
             // Act
-            await _sut.RemoveCartItemAsync(cartId, itemId);
+            var result = await _sut.RemoveCartItemAsync(cartId, itemId);
 
             // Assert
             _repoManagerMock.Verify(v => v.SaveAsync(), Times.Never);
+            Assert.False(result);
         }
     }
 }

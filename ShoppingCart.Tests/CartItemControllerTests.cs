@@ -77,12 +77,14 @@ namespace ShoppingCart.Tests
         public async Task AddCartItemAsync_ShouldReturnBadRequest_WhenClientSendInvalidObject()
         {
             // Arrange
-            var cartId = It.IsAny<int>();
+            var cartId = 1;
             var cartItemDto = new CartItemCreationDto
             {
                 Description = "Item 1"
             };
             MockModelState(cartItemDto, _sut);
+
+            _serviceManagerMock.Setup(x => x.CartItemService.AddCartItemAsync(cartItemDto, cartId)).ReturnsAsync(() => null);
 
             // Act
             var resutl = await _sut.AddCartItemAsync(cartItemDto, cartId);
@@ -146,19 +148,35 @@ namespace ShoppingCart.Tests
         }
 
         [Fact]
-        public async Task RemoveCartItemAsync_ShouldReturnNoContentResponse_Always()
+        public async Task RemoveCartItemAsync_ShouldReturnNoContentResponse_WhenItemDoesExists()
         {
             // Arrange
             var cartId = It.IsAny<int>();
             var itemId = It.IsAny<int>();
 
-            _serviceManagerMock.Setup(x => x.CartItemService.RemoveCartItemAsync(cartId, itemId));
+            _serviceManagerMock.Setup(x => x.CartItemService.RemoveCartItemAsync(cartId, itemId)).ReturnsAsync(true);
 
             // Act
             var result = await _sut.RemoveCartItemAsync(cartId, itemId);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task RemoveCartItemAsync_ShouldReturnBadRequestResponse_WhenItemDoesNotExists()
+        {
+            var cartId = It.IsAny<int>();
+            var itemId = It.IsAny<int>();
+
+            _serviceManagerMock.Setup(x => x.CartItemService.RemoveCartItemAsync(cartId, itemId)).ReturnsAsync(false);
+
+            // Act
+            var result = await _sut.RemoveCartItemAsync(cartId, itemId);
+
+            // Assert
+            Assert.IsType<BadRequestResult>(result);
+
         }
 
         protected void MockModelState<TModel, TController>(TModel model, TController controller) where TController : ControllerBase

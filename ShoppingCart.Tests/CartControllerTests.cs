@@ -55,12 +55,12 @@ namespace ShoppingCart.Tests
         }
 
         [Fact]
-        public async Task CancelCartAsync_ShouldReturnNoContentResult_EveryTime()
+        public async Task CancelCartAsync_ShouldReturnNoContentResult_WhenCartExistsAndWhenStatusChanged()
         {
             // Arrange
             var cartId = It.IsAny<int>();
 
-            _serviceManagerMock.Setup(x => x.CartService.CancelCartAsync(cartId));
+            _serviceManagerMock.Setup(x => x.CartService.CancelCartAsync(cartId)).ReturnsAsync(true);
 
             // Act
             var result = await _sut.CancelCartAsync(cartId);
@@ -68,6 +68,21 @@ namespace ShoppingCart.Tests
             // Assert
             _serviceManagerMock.Verify(v => v.CartService.CancelCartAsync(cartId), Times.Once);
             Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task CancelCartAsync_ShouldReturnBadRequest_WhenCartDoesNotExists()
+        {
+            // Arrange
+            var cartId = It.IsAny<int>();
+
+            _serviceManagerMock.Setup(x => x.CartService.CancelCartAsync(cartId)).ReturnsAsync(false);
+
+            // Act
+            var result = await _sut.CancelCartAsync(cartId);
+
+            // Assert
+            Assert.IsType<BadRequestResult>(result);
         }
     }
 }

@@ -52,13 +52,18 @@ namespace ShoppingCart.Services
             return cartItemDto;
         }
 
-        public async Task RemoveCartItemAsync(int cartId, int itemId)
+        public async Task<bool> RemoveCartItemAsync(int cartId, int itemId)
         {
             var item = await repositoryManager.CartItems.GetCartItemAsync(cartId, itemId, true);
             if (item != null)
             {
                 repositoryManager.CartItems.Delete(item);
                 await repositoryManager.SaveAsync();
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }

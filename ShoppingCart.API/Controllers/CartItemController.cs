@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShoppingCart.API.ActionFilters;
 using ShoppingCart.Contracts.IServices;
 using ShoppingCart.Entities.DTOs.CartItem;
 
@@ -34,12 +33,21 @@ namespace ShoppingCart.API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "FullAccess")]
-        [ValidationFilter]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddCartItemAsync([FromBody] CartItemCreationDto cartItemDto, int cartId)
         {
+            if (cartItemDto == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = await service.CartItemService.AddCartItemAsync(cartItemDto, cartId);
 
             if (result != null)
@@ -57,8 +65,15 @@ namespace ShoppingCart.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> RemoveCartItemAsync(int cartId, int itemId)
         {
-            await service.CartItemService.RemoveCartItemAsync(cartId, itemId);
-            return NoContent();
+            var succeeded = await service.CartItemService.RemoveCartItemAsync(cartId, itemId);
+            if (succeeded)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

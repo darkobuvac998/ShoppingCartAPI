@@ -17,7 +17,7 @@ namespace ShoppingCart.Services
             mapper = autoMapper;
         }
 
-        public async Task CancelCartAsync(int cartId)
+        public async Task<bool> CancelCartAsync(int cartId)
         {
             var cart = await repositoryManager.Carts.GetCartAsync(cartId, true);
             if (cart != null)
@@ -26,6 +26,11 @@ namespace ShoppingCart.Services
                 cart.TimeUpdated = DateTime.Now;
                 repositoryManager.Carts.Update(cart);
                 await repositoryManager.SaveAsync();
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
