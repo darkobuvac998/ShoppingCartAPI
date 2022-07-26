@@ -16,6 +16,13 @@ namespace ShoppingCart.API.Controllers
             service = serviceManager;
         }
 
+        /// <summary>
+        /// Get cart item details.
+        /// </summary>
+        /// <param name="cartId"></param>
+        /// <param name="itemId"></param>
+        /// <returns>Cart item with all attributes</returns>
+        /// <response code="404">If cart item does not exists in database.</response>
         [HttpGet("{itemId:int}", Name = "GetCartItem")]
         [Authorize(Policy = "ReadAccess")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -31,6 +38,14 @@ namespace ShoppingCart.API.Controllers
             return Ok(item);
         }
 
+        /// <summary>
+        /// Add new item to cart.
+        /// </summary>
+        /// <param name="cartItemDto"></param>
+        /// <param name="cartId"></param>
+        /// <returns>Created item with all attributes.</returns>
+        /// <response code="201">If item is added successfully.</response>
+        /// <response code="400">If any validation error occurs.</response>
         [HttpPost]
         [Authorize(Policy = "FullAccess")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -60,6 +75,13 @@ namespace ShoppingCart.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Removes item from cart.
+        /// </summary>
+        /// <param name="cartId"></param>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        /// <response code="400">If cart does not exists in database.</response>
         [HttpDelete("{itemId:int}")]
         [Authorize(Policy = "FullAccess")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

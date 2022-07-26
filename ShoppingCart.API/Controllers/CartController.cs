@@ -15,6 +15,13 @@ namespace ShoppingCart.API.Controllers
             service = serviceManager;
         }
 
+        /// <summary>
+        /// Get overview of a shopping cart.
+        /// </summary>
+        /// <param name="cartId"></param>
+        /// <returns>Cart with cart items.</returns>
+        /// <response code="200">Cart whit cart items.</response>
+        /// <response code="404">If cart does not exists in database.</response>
         [HttpGet]
         [Authorize(Policy = "ReadAccess")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -31,6 +38,10 @@ namespace ShoppingCart.API.Controllers
             return Ok(cart);
         }
 
+        /// <summary>
+        /// Change the cart status to canceled.
+        /// </summary>
+        /// <param name="cartId"></param>
         [HttpPut("cancel")]
         [Authorize(Policy = "FullAccess")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -48,6 +59,11 @@ namespace ShoppingCart.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Submits cart and send data to 3rd party system.
+        /// </summary>
+        /// <param name="cartId"></param>
+        /// <returns></returns>
         [HttpPost("submit")]
         [Authorize(Policy = "FullAccess")]
         public async Task SubmitCart(int cartId)

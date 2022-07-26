@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using ShoppingCart.Contracts;
 using ShoppingCart.Contracts.IRepositories;
 using ShoppingCart.Contracts.IServices;
@@ -9,6 +10,7 @@ using ShoppingCart.Entities.Data;
 using ShoppingCart.Repositories;
 using ShoppingCart.Services;
 using ShoppingCart.Services.LoggerService;
+using System.Reflection;
 
 namespace ShoppingCart.API.Extensions
 {
@@ -68,6 +70,49 @@ namespace ShoppingCart.API.Extensions
             {
                 options.AddPolicy("FullAccess", policy => policy.RequireRole(UserRoles.Standard));
                 options.AddPolicy("ReadAccess", policy => policy.RequireAssertion(ctx => ctx.User.IsInRole(UserRoles.Standard) || ctx.User.IsInRole(UserRoles.Viewer)));
+            });
+        }
+
+        public static void ConfigureSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(s =>
+            {
+                s.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "ShoppingCart API",
+                    Version = "v1",
+                    Description = "ShoppingCart API"
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                s.IncludeXmlComments(xmlPath);
+
+                s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Place to add JWT with Bearer",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                s.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Name = "Bearer"
+                        },
+                        new List<string>()
+                    }
+                });
+
             });
         }
     }
