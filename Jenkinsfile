@@ -1,33 +1,29 @@
-pipeline{
-    agent{
-        any
-    }
-    stages{
-
-      stage('Build'){
-        steps{
-          sh '''
-          docker build -t nginx:latest
-          '''
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                echo "Building.."
+                sh '''
+                echo "doing build stuff.."
+                '''
+            }
         }
-      }
-
-      stage('Test'){
-        steps{
-          sh '''docker run -it nignx:latest curl localhost:5000'''
+        stage('Test') {
+            steps {
+                echo "Testing.."
+                sh '''
+                echo "doing test stuff..
+                '''
+            }
         }
-      } 
-
-      stage('Package'){
-        steps{
-
+        stage('Deliver') {
+            steps {
+                echo 'Deliver....'
+                sh '''
+                echo "doing delivery stuff.."
+                '''
+            }
         }
-      }
-
-      stage('Deploy'){
-        steps{
-
-        }
-      }
     }
 }
