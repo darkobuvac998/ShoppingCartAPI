@@ -9,8 +9,7 @@ pipeline {
                 '''
                 sh '''
                 docker ps -a
-                docker container prune
-                y
+                docker container prune -f
                 docker run -d --rm -d -p 8080:80 --name web nginx
                 docker ps -a
                 '''
