@@ -1,15 +1,13 @@
 pipeline {
-    agent any
+    agent {
+        image 'mcr.microsoft.com/dotnet/runtime:6.0-alpine'
+    }
     stages {
-        stage('Read project files'){
+        stage('Test Build Agent Environemt'){
           steps{
             echo "Navigating to source code"
             sh '''
-            cd /var/jenkins_home/workspace/ShoppingCartAPI-DEV
-            dir
-            cat Jenkinsfile
-            cd ShoppingCart.Contracts/IRepositories
-            cat IBaseRepository.cs
+            dotnet --info
             '''
           }
         }
