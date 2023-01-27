@@ -4,6 +4,11 @@ pipeline {
             image 'mcr.microsoft.com/dotnet/sdk:6.0-alpine'
         }
     }
+    environment {
+        DISABLE_AUTH = 'true'
+        DB_ENGINE    = 'sqlite'
+        DOTNET_CLI_HOME = "/tmp/DOTNET_CLI_HOME"
+    }
     stages {
         stage('Test Build Agent Environemt'){
           steps{
