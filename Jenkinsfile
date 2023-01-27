@@ -1,6 +1,8 @@
 pipeline {
     agent {
-        image 'mcr.microsoft.com/dotnet/runtime:6.0-alpine'
+        docker{
+            image 'mcr.microsoft.com/dotnet/runtime:6.0-alpine'
+        }
     }
     stages {
         stage('Test Build Agent Environemt'){
