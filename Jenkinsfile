@@ -1,6 +1,18 @@
 pipeline {
     agent any
     stages {
+        stage('Read project files'){
+          steps{
+            echo "Navigating to source code"
+            sh '''
+            cd /var/jenkins_home/workspace/ShoppingCartAPI-DEV
+            dir
+            cat Jenkinsfile
+            cd cd ShoppingCart.Contracts/IRepositories
+            cat IBaseRepository.cs
+            '''
+          }
+        }
         stage('Build') {
             steps {
                 echo "Building.."
