@@ -7,6 +7,8 @@ pipeline {
                 sh '''
                 echo "doing build stuff.."
                 '''
+                docker ps -a
+                docker run nginx --name nginx --rm
             }
         }
         stage('Test') {
@@ -15,6 +17,7 @@ pipeline {
                 sh '''
                 echo "doing test stuff.."
                 '''
+                docker ps
             }
         }
         stage('Deliver') {
@@ -23,6 +26,7 @@ pipeline {
                 sh '''
                 echo "doing delivery stuff.."
                 '''
+                docker stop nginx
             }
         }
     }
