@@ -23,8 +23,7 @@ pipeline {
                 echo "Building ShoppingCart.API.."
                 sh '''
                 cd /var/jenkins_home/workspace/ShoppingCartAPI-DEV/ShoppingCart.API
-                dotnet restore
-                dotnet build
+                dotnet build "ShoppingCart.API.csproj" -c Release -o ../build
                 '''
             }
         }
