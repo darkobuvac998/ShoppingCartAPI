@@ -8,7 +8,7 @@ pipeline {
             cd /var/jenkins_home/workspace/ShoppingCartAPI-DEV
             dir
             cat Jenkinsfile
-            cd cd ShoppingCart.Contracts/IRepositories
+            cd ShoppingCart.Contracts/IRepositories
             cat IBaseRepository.cs
             '''
           }
