@@ -13,14 +13,13 @@ pipeline {
             '''
           }
         }
-        stage('Build') {
+        stage('Build dotnet project') {
             steps {
-                echo "Building.."
+                echo "Building ShoppingCart.API.."
                 sh '''
-                echo "doing build stuff.."
-                '''
-                sh '''
-               
+                cd /var/jenkins_home/workspace/ShoppingCartAPI-DEV/ShoppingCart.API
+                dotnet restore
+                dotnet build
                 '''
             }
         }
