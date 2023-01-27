@@ -22,7 +22,7 @@ pipeline {
                 echo "doing test stuff.."
                 '''
                 sh '''
-                docker ps
+                docker ps -a
                 '''
             }
         }
@@ -34,6 +34,7 @@ pipeline {
                 '''
                 sh '''
                 docker stop web
+                docker ps -a
                 '''
             }
         }
