@@ -22,6 +22,14 @@ pipeline {
                         '''
                     }
                 }
+                stage('Restore dotnet project'){
+                    steps{
+                        echo "Restore packages"
+                        sh '''
+                        dotnet restore "ShoppingCart.API.csproj"
+                        '''
+                    }
+                }
                 stage('Build dotnet project') {
                     steps {
                         echo "Building ShoppingCart.API.."
