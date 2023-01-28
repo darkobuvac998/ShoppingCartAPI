@@ -10,7 +10,7 @@ pipeline {
             agent {
                 dockerfile{
                     filename 'Dockerfile'
-                    dir '/var/jenkins_home/workspace/ShoppingCartAPI-DEV/ShoppingCart.API/docker/build-agent'
+                    dir '/var/jenkins_home/workspace/ShoppingCartAPI-DEV/docker/build-agent'
                 }
             }
             stages {
