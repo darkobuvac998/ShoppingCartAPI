@@ -8,8 +8,10 @@ pipeline {
     stages {
         stage('Test and Build'){
             agent {
-                filename 'Dockerfile'
-                dir '/var/jenkins_home/workspace/ShoppingCartAPI-DEV/ShoppingCart.API/docker/build-agent'
+                dockerfile{
+                    filename 'Dockerfile'
+                    dir '/var/jenkins_home/workspace/ShoppingCartAPI-DEV/ShoppingCart.API/docker/build-agent'
+                }
             }
             stages {
                 stage('Test Build Agent Environemt'){
