@@ -1,19 +1,29 @@
 pipeline {
-    agent { 
-        node {
-            label 'docker-agent-python'
-            }
-      }
-    triggers {
-        pollSCM '* * * * *'
+    agent {
+        docker{
+            image 'mcr.microsoft.com/dotnet/sdk:6.0-alpine'
+        }
+    }
+    environment {
+        DISABLE_AUTH = 'true'
+        DB_ENGINE    = 'sqlite'
+        DOTNET_CLI_HOME = "/tmp/DOTNET_CLI_HOME"
     }
     stages {
-        stage('Build') {
+        stage('Test Build Agent Environemt'){
+          steps{
+            echo "Navigating to source code"
+            sh '''
+            dotnet --info
+            '''
+          }
+        }
+        stage('Build dotnet project') {
             steps {
-                echo "Building.."
+                echo "Building ShoppingCart.API.."
                 sh '''
-                cd myapp
-                pip install -r requirements.txt
+                cd /var/jenkins_home/workspace/ShoppingCartAPI-DEV/ShoppingCart.API
+                dotnet build "ShoppingCart.API.csproj" -c Release -o ../build
                 '''
             }
         }
@@ -21,9 +31,10 @@ pipeline {
             steps {
                 echo "Testing.."
                 sh '''
-                cd myapp
-                python3 hello.py
-                python3 hello.py --name=Brad
+                echo "doing test stuff.."
+                '''
+                sh '''
+
                 '''
             }
         }
@@ -32,6 +43,10 @@ pipeline {
                 echo 'Deliver....'
                 sh '''
                 echo "doing delivery stuff.."
+                '''
+                sh '''
+
+
                 '''
             }
         }
