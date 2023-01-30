@@ -16,16 +16,15 @@ pipeline {
                 stage('Test Build Agent Environemt'){
                     steps{
                         echo "Navigating to source code"
-                        sh '''
-                        dotnet --info
-                        '''
+                        sh 'dotnet --info'
                     }
                 }
                 stage('Restore dotnet project'){
                     steps{
                         echo "Restore packages"
                         sh '''
-                        dotnet restore "ShoppingCart.API.csproj"
+                        docker ps -a
+                        docker --version
                         '''
                     }
                 }
