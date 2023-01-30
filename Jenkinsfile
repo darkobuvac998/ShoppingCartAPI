@@ -18,9 +18,7 @@ pipeline {
                         echo "Building ShoppingCart.API.."
                         sh '''
                         pwd
-                        ls -la
-                        cd agent/workspace/ShoppingCartAPI-DEV
-                        dotnet build
+                        dotnet build .
                         '''
                     }
                 }
