@@ -13,25 +13,12 @@ pipeline {
                 }
             }
             stages {
-                stage('Test Build Agent Environemt'){
-                    steps{
-                        echo "Navigating to source code"
-                        sh 'dotnet --info'
-                    }
-                }
-                stage('Restore dotnet project'){
-                    steps{
-                        echo "Restore packages"
-                        sh '''
-                        docker ps -a
-                        docker --version
-                        '''
-                    }
-                }
                 stage('Build dotnet project') {
                     steps {
                         echo "Building ShoppingCart.API.."
                         sh '''
+                        cd agent/workspace/ShoppingCartAPI-DEV
+                        dotnet build
                         '''
                     }
                 }
