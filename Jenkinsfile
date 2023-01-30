@@ -18,7 +18,8 @@ pipeline {
                         echo "Building ShoppingCart.API.."
                         sh '''
                         pwd
-                        dotnet build .
+                        cd ShoppingCart.API/ 
+                        dotnet build "ShoppingCart.API.csproj" -c Release -o /bin
                         '''
                     }
                 }
