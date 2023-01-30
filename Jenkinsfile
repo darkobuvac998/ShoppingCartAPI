@@ -8,9 +8,8 @@ pipeline {
     stages {
         stage('Test and Build'){
             agent {
-                dockerfile{
-                    filename 'Dockerfile'
-                    dir '/var/jenkins_home/workspace/ShoppingCartAPI-DEV/docker/build-agent'
+                node {
+                    label 'dotnet-agent'
                 }
             }
             stages {
@@ -34,8 +33,6 @@ pipeline {
                     steps {
                         echo "Building ShoppingCart.API.."
                         sh '''
-                        cd /var/jenkins_home/workspace/ShoppingCartAPI-DEV/ShoppingCart.API
-                        dotnet build "ShoppingCart.API.csproj" -c Release -o ../build
                         '''
                     }
                 }
