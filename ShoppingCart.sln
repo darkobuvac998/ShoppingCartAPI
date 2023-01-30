@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCart.Contracts", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCart.Repositories", "ShoppingCart.Repositories\ShoppingCart.Repositories.csproj", "{7538F4B1-35B0-42FD-B7EE-E27967E97B9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCart.Tests", "ShoppingCart.Tests\ShoppingCart.Tests.csproj", "{EE6208D4-CEE6-47C2-BB5D-C3CB966D7ABD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCart.IntegrationTests", "ShoppingCart.IntegrationTests\ShoppingCart.IntegrationTests.csproj", "{59D705B3-996B-4398-B311-031F95CD1A2E}"
 EndProject
 Global
