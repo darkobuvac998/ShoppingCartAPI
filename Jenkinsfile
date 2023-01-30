@@ -19,7 +19,7 @@ pipeline {
                         sh '''
                         pwd
                         cd ShoppingCart.API/ 
-                        dotnet build "ShoppingCart.API.csproj" -c Release -o /bin
+                        dotnet build "ShoppingCart.API.csproj" -c Release
                         '''
                     }
                 }
