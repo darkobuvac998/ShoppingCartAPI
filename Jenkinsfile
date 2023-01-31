@@ -17,7 +17,7 @@ pipeline{
         string(defaultValue: "dev", description: 'Branch Specifier', name: 'SPECIFIER')
     }
     stages{
-        stage('Initialize){
+        stage('Initialize'){
             steps{
                 script{
                     notifyBuild('STARTED')
