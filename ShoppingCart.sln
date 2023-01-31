@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCart.Contracts", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCart.Repositories", "ShoppingCart.Repositories\ShoppingCart.Repositories.csproj", "{7538F4B1-35B0-42FD-B7EE-E27967E97B9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCart.IntegrationTests", "ShoppingCart.IntegrationTests\ShoppingCart.IntegrationTests.csproj", "{59D705B3-996B-4398-B311-031F95CD1A2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCart.IntegrationTests", "ShoppingCart.IntegrationTests\ShoppingCart.IntegrationTests.csproj", "{59D705B3-996B-4398-B311-031F95CD1A2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCartAPI.UnitTests", "ShoppingCartAPI.UnitTests\ShoppingCartAPI.UnitTests.csproj", "{A4FF3F8F-4C44-433A-AE9F-B4FC333BBCB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,14 +43,14 @@ Global
 		{7538F4B1-35B0-42FD-B7EE-E27967E97B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7538F4B1-35B0-42FD-B7EE-E27967E97B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7538F4B1-35B0-42FD-B7EE-E27967E97B9D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EE6208D4-CEE6-47C2-BB5D-C3CB966D7ABD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE6208D4-CEE6-47C2-BB5D-C3CB966D7ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EE6208D4-CEE6-47C2-BB5D-C3CB966D7ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EE6208D4-CEE6-47C2-BB5D-C3CB966D7ABD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59D705B3-996B-4398-B311-031F95CD1A2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{59D705B3-996B-4398-B311-031F95CD1A2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59D705B3-996B-4398-B311-031F95CD1A2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59D705B3-996B-4398-B311-031F95CD1A2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4FF3F8F-4C44-433A-AE9F-B4FC333BBCB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4FF3F8F-4C44-433A-AE9F-B4FC333BBCB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4FF3F8F-4C44-433A-AE9F-B4FC333BBCB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4FF3F8F-4C44-433A-AE9F-B4FC333BBCB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
