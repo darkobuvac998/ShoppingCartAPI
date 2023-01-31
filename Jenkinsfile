@@ -27,7 +27,7 @@ pipeline{
                 }
             }
         }
-        stage('Restore Nuget packages'){
+        stage('Checkout'){
             steps{
                 echo 'Checkout Repo'
                 git branch: "${params.SPECIFIER}", url: "${GIT_URL}"
