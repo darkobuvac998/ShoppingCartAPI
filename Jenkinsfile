@@ -15,7 +15,7 @@ pipeline{
         string(defaultValue: "dev", description: 'Branch Specifier', name: 'SPECIFIER')
     }
     stages{
-        stage("Initialize"){
+        stage('Initialize){
             steps{
                 script{
                     notifyBuild('STARTED')
@@ -25,7 +25,7 @@ pipeline{
                 }
             }
         }
-        stage(name: 'Restore Nuget packages'){
+        stage('Restore Nuget packages'){
             steps{
                 echo 'Checkout Repo'
                 git branch: "${params.SPECIFIER}", url: "${GIT_URL}"
@@ -37,13 +37,13 @@ pipeline{
                 sh 'dotnet restore "ShoppingCart.sln"'
             }
         }
-        stage(name: 'Build solution'){
+        stage('Build solution'){
             steps{
                 echo 'Run dotnet build - Builds a project and all of its dependencies'
                 sh 'dotnet build "ShoppingCart.sln"'
             }
         }
-        stage(name: 'Publish Reports'){
+        stage('Publish Reports'){
             steps{
                 echo 'Publish Junit Report'
                 junit allowEmptyResults: true, testResults: 'target/test-reports/*.xml'
