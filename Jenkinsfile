@@ -27,12 +27,6 @@ pipeline{
                 }
             }
         }
-        stage('Checkout'){
-            steps{
-                echo 'Checkout Repo'
-                git branch: "${params.SPECIFIER}", url: "${GIT_URL}"
-            }
-        }
         stage('Restore packages'){
             steps{
                 echo 'Run .NET dependency restorer'
@@ -73,7 +67,7 @@ pipeline{
                     reportName: 'Code Coverage'
                 ]
 
-                whitesource jobApiToken: '', jobCheckPolicies: 'global', jobForceUpdate: 'global', libExcludes: '', libIncludes: '', product: "${env.WS_PRODUCT_TOKEN}", productVersion: '', projectToken: "${env.WS_PROJECT_TOKEN}", requesterEmail: ''
+                // whitesource jobApiToken: '', jobCheckPolicies: 'global', jobForceUpdate: 'global', libExcludes: '', libIncludes: '', product: "${env.WS_PRODUCT_TOKEN}", productVersion: '', projectToken: "${env.WS_PROJECT_TOKEN}", requesterEmail: ''
 
             }
         }
