@@ -5,7 +5,7 @@ pipeline{
         label "dotnet-agent"
     }
     options {
-        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '10', numToKeepStr: '20'))
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '1', numToKeepStr: '10'))
         timestamps()
         timeout time:10, unit:'MINUTES'
     }
