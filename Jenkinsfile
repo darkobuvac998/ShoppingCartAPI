@@ -95,12 +95,14 @@ pipeline{
 
         stage('Build docker image'){
             steps{
-                branchName = getCurrentBranch()
-                shortCommitHash = getShortCommitHash()
-                IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + "-" + shortCommitHash
-                sh "cd docker"
-                sh "docker build -t shopping-cart:${IMAGE_VERSION}"
-                sh "docker image ls"
+                script{
+                    branchName = getCurrentBranch()
+                    shortCommitHash = getShortCommitHash()
+                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + "-" + shortCommitHash
+                    sh "cd docker"
+                    sh "docker build -t shopping-cart:${IMAGE_VERSION}"
+                    sh "docker image ls"
+                }
             }
         }
     }
