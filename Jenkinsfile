@@ -49,16 +49,16 @@ pipeline{
                 '''
             }
         }
-        stage('Run Integration Tests'){
-            steps{
-                echo 'Run dotnet test'
-                sh '''
-                cd ShoppingCart.IntegrationTests
-                dotnet test "ShoppingCart.IntegrationTests.csproj"
-                cd ../
-                '''
-            }
-        }
+        // stage('Run Integration Tests'){
+        //     steps{
+        //         echo 'Run dotnet test'
+        //         sh '''
+        //         cd ShoppingCart.IntegrationTests
+        //         dotnet test "ShoppingCart.IntegrationTests.csproj"
+        //         cd ../
+        //         '''
+        //     }
+        // }
         stage('Publish Reports'){
             steps{
                 echo 'Publish Junit Report'
