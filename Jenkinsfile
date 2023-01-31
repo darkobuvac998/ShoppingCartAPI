@@ -46,8 +46,6 @@ pipeline{
 
                 echo(message: 'Publish Junit HTML Report')
 
-                step([$class: 'JUnitResultArchiver', testResults: '**/reports/junit/*.xml', healthScaleFactor: 1.0])
-
                 publishHTML target: [
                     allowMissing: true,
                     alwaysLinkToLastBuild: false,
