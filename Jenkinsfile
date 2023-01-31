@@ -10,6 +10,8 @@ pipeline{
         timeout time:10, unit:'MINUTES'
     }
     environment{
+        BUILD_NUMBER = "${env.BUILD_NUMBER}"
+        IMAGE_VERSION="v_${BUILD_NUMBER}"
         APP_NAME='ShoppingCartAPI'
         GIT_URL="git@github.com:darkobuvac998/${APP_NAME}.git"
     }
@@ -59,6 +61,7 @@ pipeline{
         //         '''
         //     }
         // }
+
         stage('Publish Reports'){
             steps{
                 echo 'Publish Junit Report'
@@ -87,6 +90,17 @@ pipeline{
 
                 // whitesource jobApiToken: '', jobCheckPolicies: 'global', jobForceUpdate: 'global', libExcludes: '', libIncludes: '', product: "${env.WS_PRODUCT_TOKEN}", productVersion: '', projectToken: "${env.WS_PROJECT_TOKEN}", requesterEmail: ''
 
+            }
+        }
+
+        stage('Build docker image'){
+            steps{
+                branchName = getCurrentBranch()
+                shortCommitHash = getShortCommitHash()
+                IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + "-" + shortCommitHash
+                sh "cd docker"
+                sh "docker build -t shopping-cart:${IMAGE_VERSION}"
+                sh "docker image ls"
             }
         }
     }
