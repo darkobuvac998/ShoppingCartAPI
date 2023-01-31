@@ -44,8 +44,6 @@ pipeline{
                 echo 'Publish Junit Report'
                 junit allowEmptyResults: true, testResults: 'target/test-reports/*.xml'
 
-                step([$class: 'FindBugsPublisher', canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: 'target/scala-2.11/findbugs/report.xml', unHealthy: ''])
-
                 echo(message: 'Publish Junit HTML Report')
 
                 publishHTML target: [
