@@ -99,7 +99,7 @@ pipeline{
                     branchName = getCurrentBranch()
                     shortCommitHash = getShortCommitHash()
                     IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + "-" + shortCommitHash
-                    sh "cat docker/Dockerfile"
+                    sh "cat ShoppingCart.API/Dockerfile"
                     sh "docker ps"
                     sh "docker build -t shopping-cart:${IMAGE_VERSION} ./docker"
                     sh "docker image ls"
