@@ -50,12 +50,14 @@ pipeline{
             }
         }
         stage('Run Integration Tests'){
-            echo 'Run dotnet test'
-            sh '''
-            cd ShoppingCart.IntegrationTests
-            dotnet test "ShoppingCart.IntegrationTests.csproj"
-            cd ../
-            '''
+            steps{
+                echo 'Run dotnet test'
+                sh '''
+                cd ShoppingCart.IntegrationTests
+                dotnet test "ShoppingCart.IntegrationTests.csproj"
+                cd ../
+                '''
+            }
         }
         stage('Publish Reports'){
             steps{
