@@ -46,6 +46,8 @@ pipeline{
 
                 echo(message: 'Publish Junit HTML Report')
 
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'coverage', reportFiles: 'index.html', reportName: 'BUILD Report', reportTitles: '', useWrapperFileDirectly: true])
+
                 publishHTML target: [
                     allowMissing: true,
                     alwaysLinkToLastBuild: false,
@@ -160,6 +162,10 @@ def notifyBuild(String buildStatus = 'STARTED') {
         color = 'RED'
         colorCode = '#FF0000'
     }
+
+    echo(message: summary)
+
+    return summary
     
     // Send notifications
     // hipchatSend(color: color, notify: true, message: summary, token: "${env.HIPCHAT_TOKEN}",
