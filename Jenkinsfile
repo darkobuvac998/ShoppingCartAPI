@@ -46,8 +46,6 @@ pipeline{
 
                 echo(message: 'Publish Junit HTML Report')
 
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'coverage', reportFiles: 'index.html', reportName: 'BUILD Report', reportTitles: '', useWrapperFileDirectly: true])
-
                 publishHTML target: [
                     allowMissing: true,
                     alwaysLinkToLastBuild: false,
