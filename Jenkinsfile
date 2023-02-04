@@ -20,7 +20,7 @@ pipeline{
 
         stage('Test project and build docker image'){
             parallel{
-                stage('Application'){
+                stage('Docker primary'){
                     agent{
                         label "dotnet-agent"
                     }
@@ -59,38 +59,19 @@ pipeline{
                         }
                         stage('Publish Reports'){
                             steps{
-                                echo 'Publish Junit Report'
-                                junit allowEmptyResults: true, testResults: 'target/test-reports/*.xml'
-
-                                echo(message: 'Publish Junit HTML Report')
-
-                                publishHTML target: [
-                                    allowMissing: true,
-                                    alwaysLinkToLastBuild: false,
-                                    keepAll: true,
-                                    reportDir: 'target/reports/html',
-                                    reportFiles: 'index.html',
-                                    reportName: 'Test'
-                                ]
-
-                                echo 'Publish Coverage HTML Report'
-                                publishHTML target: [
-                                    allowMissing: true,
-                                    alwaysLinkToLastBuild: false,
-                                    keepAll: true,
-                                    reportDir: 'target/scala-2.11/scoverage-report',
-                                    reportFiles: 'index.html',
-                                    reportName: 'Code Coverage'
-                                ]
-
-                                // whitesource jobApiToken: '', jobCheckPolicies: 'global', jobForceUpdate: 'global', libExcludes: '', libIncludes: '', product: "${env.WS_PRODUCT_TOKEN}", productVersion: '', projectToken: "${env.WS_PROJECT_TOKEN}", requesterEmail: ''
-
+                                script{
+                                    branchName = getCurrentBranch()
+                                    shortCommitHash = getShortCommitHash()
+                                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + "-" + shortCommitHash
+                                    sh "docker ps"
+                                    sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
+                                    sh "docker image ls"
+                                }
                             }
                         }
-
                     }
                 }
-                stage('Docker'){
+                stage('Docker secondary'){
                     agent{
                         label "docker-secondary"
                     }
