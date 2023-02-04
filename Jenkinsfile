@@ -1,9 +1,7 @@
 #!groovy
 
 pipeline{
-    agent{
-        label "dotnet-agent"
-    }
+    agent none
     options {
         buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '1', numToKeepStr: '10'))
         timestamps()
@@ -19,92 +17,112 @@ pipeline{
         string(defaultValue: "dev", description: 'Branch Specifier', name: 'SPECIFIER')
     }
     stages{
-        stage('Initialize'){
-            steps{
-                script{
-                    notifyBuild('STARTED')
-                    echo "${BUILD_NUMBER} - ${env.BUILD_ID} on ${env.JENKINS_URL}"
-                    echo "Branch Specifier :: ${params.SPECIFIER}"
-                    sh 'rm -rf target/universal/*.zip'
+
+        stage('Test project and build docker image'){
+            parallel{
+                stage('Application'){
+                    agent{
+                        label "dotnet-agent"
+                    }
+                    stages{
+                        stage('Initialize'){
+                            steps{
+                                script{
+                                    notifyBuild('STARTED')
+                                    echo "${BUILD_NUMBER} - ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                                    echo "Branch Specifier :: ${params.SPECIFIER}"
+                                    sh 'rm -rf target/universal/*.zip'
+                                }
+                            }
+                        }
+                        stage('Restore packages'){
+                            steps{
+                                echo 'Run .NET dependency restorer'
+                                sh 'dotnet restore "ShoppingCart.sln"'
+                            }
+                        }
+                        stage('Build solution'){
+                            steps{
+                                echo 'Run dotnet build - Builds a project and all of its dependencies'
+                                sh 'dotnet build "ShoppingCart.sln"'
+                            }
+                        }
+                        stage('Run Unit Tests'){
+                            steps{
+                                echo 'Run dotnet test - '
+                                sh '''
+                                cd ShoppingCartAPI.UnitTests
+                                dotnet test "ShoppingCartAPI.UnitTests.csproj"
+                                cd ../
+                                '''
+                            }
+                        }
+                        // stage('Run Integration Tests'){
+                        //     steps{
+                        //         echo 'Run dotnet test'
+                        //         sh '''
+                        //         cd ShoppingCart.IntegrationTests
+                        //         dotnet test "ShoppingCart.IntegrationTests.csproj"
+                        //         cd ../
+                        //         '''
+                        //     }
+                        // }
+
+                        stage('Publish Reports'){
+                            steps{
+                                echo 'Publish Junit Report'
+                                junit allowEmptyResults: true, testResults: 'target/test-reports/*.xml'
+
+                                echo(message: 'Publish Junit HTML Report')
+
+                                publishHTML target: [
+                                    allowMissing: true,
+                                    alwaysLinkToLastBuild: false,
+                                    keepAll: true,
+                                    reportDir: 'target/reports/html',
+                                    reportFiles: 'index.html',
+                                    reportName: 'Test'
+                                ]
+
+                                echo 'Publish Coverage HTML Report'
+                                publishHTML target: [
+                                    allowMissing: true,
+                                    alwaysLinkToLastBuild: false,
+                                    keepAll: true,
+                                    reportDir: 'target/scala-2.11/scoverage-report',
+                                    reportFiles: 'index.html',
+                                    reportName: 'Code Coverage'
+                                ]
+
+                                // whitesource jobApiToken: '', jobCheckPolicies: 'global', jobForceUpdate: 'global', libExcludes: '', libIncludes: '', product: "${env.WS_PRODUCT_TOKEN}", productVersion: '', projectToken: "${env.WS_PROJECT_TOKEN}", requesterEmail: ''
+
+                            }
+                        }
+
+                    }
+                }
+                stage('Docker'){
+                    agent{
+                        label "docker-secondary"
+                    }
+                    stages{
+                        stage('Build docker image'){
+                            steps{
+                                script{
+                                    branchName = getCurrentBranch()
+                                    shortCommitHash = getShortCommitHash()
+                                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + "-" + shortCommitHash
+                                    sh "docker ps"
+                                    sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
+                                    sh "docker image ls"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-        stage('Restore packages'){
-            steps{
-                echo 'Run .NET dependency restorer'
-                sh 'dotnet restore "ShoppingCart.sln"'
-            }
-        }
-        stage('Build solution'){
-            steps{
-                echo 'Run dotnet build - Builds a project and all of its dependencies'
-                sh 'dotnet build "ShoppingCart.sln"'
-            }
-        }
-        stage('Run Unit Tests'){
-            steps{
-                echo 'Run dotnet test - '
-                sh '''
-                cd ShoppingCartAPI.UnitTests
-                dotnet test "ShoppingCartAPI.UnitTests.csproj"
-                cd ../
-                '''
-            }
-        }
-        // stage('Run Integration Tests'){
-        //     steps{
-        //         echo 'Run dotnet test'
-        //         sh '''
-        //         cd ShoppingCart.IntegrationTests
-        //         dotnet test "ShoppingCart.IntegrationTests.csproj"
-        //         cd ../
-        //         '''
-        //     }
-        // }
 
-        stage('Publish Reports'){
-            steps{
-                echo 'Publish Junit Report'
-                junit allowEmptyResults: true, testResults: 'target/test-reports/*.xml'
-
-                echo(message: 'Publish Junit HTML Report')
-
-                publishHTML target: [
-                    allowMissing: true,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'target/reports/html',
-                    reportFiles: 'index.html',
-                    reportName: 'Test'
-                ]
-
-                echo 'Publish Coverage HTML Report'
-                publishHTML target: [
-                    allowMissing: true,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'target/scala-2.11/scoverage-report',
-                    reportFiles: 'index.html',
-                    reportName: 'Code Coverage'
-                ]
-
-                // whitesource jobApiToken: '', jobCheckPolicies: 'global', jobForceUpdate: 'global', libExcludes: '', libIncludes: '', product: "${env.WS_PRODUCT_TOKEN}", productVersion: '', projectToken: "${env.WS_PROJECT_TOKEN}", requesterEmail: ''
-
-            }
-        }
-
-        stage('Build docker image'){
-            steps{
-                script{
-                    branchName = getCurrentBranch()
-                    shortCommitHash = getShortCommitHash()
-                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + "-" + shortCommitHash
-                    sh "docker ps"
-                    sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
-                    sh "docker image ls"
-                }
-            }
-        }
     }
     post{
         always{
