@@ -44,7 +44,7 @@ pipeline{
                         stage('Build solution'){
                             steps{
                                 echo 'Run dotnet build - Builds a project and all of its dependencies'
-                                sh 'dotnet build "ShoppingCart.sln"'
+                                sh 'dotnet build "ShoppingyCart.sln"'
                             }
                         }
                         stage('Run Unit Tests'){
