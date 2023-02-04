@@ -20,7 +20,7 @@ pipeline{
 
         stage('Test project and build docker image'){
             parallel{
-                stage('Application'){
+                stage('Docker primary'){
                     agent{
                         label "dotnet-agent"
                     }
@@ -112,7 +112,7 @@ pipeline{
                         }
                     }
                 }
-                stage('Docker'){
+                stage('Docker secondary'){
                     agent{
                         label "docker-secondary"
                     }
