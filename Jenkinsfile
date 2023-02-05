@@ -112,17 +112,19 @@ pipeline {
                 echo 'Pipeline finished with status: ${currentBuild.result}'
 
                 if (currentBuild.result == 'FAILURE') {
-                    def failedStages = []
-                    currentBuild.stages.each {
-                        stage ->
-                        if (stage.status == 'FAILED') {
-                            failedStages << stage
-                        }
-                    }
+                    // def failedStages = []
+                    // currentBuild.stages.each {
+                    //     stage ->
+                    //     if (stage.status == 'FAILED') {
+                    //         failedStages << stage
+                    //     }
+                    // }
 
-                    echo 'Failes stages: ${failedStages}'
+                    // echo 'Failes stages: ${failedStages}'
 
-                    notifySlack(currentBuild.result, collectFailureLogs(failedStages))
+                    // notifySlack(currentBuild.result, collectFailureLogs(failedStages))
+
+                    echo '${currentBuild}'
                 }
 
                 if (currentBuild.result == 'SUCCESS') {
