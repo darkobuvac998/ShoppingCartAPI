@@ -12,6 +12,13 @@ pipeline {
         IMAGE_VERSION = "v_${BUILD_NUMBER}"
         APP_NAME = 'ShoppingCartAPI'
         GIT_URL = "git@github.com:darkobuvac998/${APP_NAME}.git"
+        IMAGE_TAG = ""
+        GIT_BRANCH = ""
+        GIT_COMMIT_HASH = ""
+        GIT_COMMIT_AUTHOR = ""
+        GIT_COMMIT_MESSAGE = ""
+        GIT_COMMIT_AUTHOR_EMAIL = ""
+        GIT_CHANGES = ""
     }
     parameters {
         string(defaultValue: 'dev', description: 'Branch Specifier', name: 'SPECIFIER')
