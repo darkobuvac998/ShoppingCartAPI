@@ -24,7 +24,16 @@ pipeline {
         string(defaultValue: 'dev', description: 'Branch Specifier', name: 'SPECIFIER')
     }
     stages {
+        stage('Git Chckout'){
+            steps{
+                git branch: 'dev', credentialsId: 'jenkins-github', url: 'git@github.com:darkobuvac998/ShoppingCartAPI.git'
+            }
+        }
         stage('Notify Slack') {
+            environment{
+                IMAGE_TAG = getCurrentBranch()
+                GIT_BRANCH = getCurrentBranch()
+            }
             steps {
                 script {
                     notifySlack(currentBuild.result)
