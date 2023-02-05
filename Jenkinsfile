@@ -1,33 +1,44 @@
 #!groovy
 
-pipeline{
+pipeline {
     agent any
     options {
         buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '1', numToKeepStr: '10'))
         timestamps()
         timeout time:10, unit:'MINUTES'
     }
-    environment{
+    environment {
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
-        IMAGE_VERSION="v_${BUILD_NUMBER}"
-        APP_NAME='ShoppingCartAPI'
-        GIT_URL="git@github.com:darkobuvac998/${APP_NAME}.git"
+        IMAGE_VERSION = "v_${BUILD_NUMBER}"
+        APP_NAME = 'ShoppingCartAPI'
+        GIT_URL = "git@github.com:darkobuvac998/${APP_NAME}.git"
     }
-    parameters{
-        string(defaultValue: "dev", description: 'Branch Specifier', name: 'SPECIFIER')
+    parameters {
+        string(defaultValue: 'dev', description: 'Branch Specifier', name: 'SPECIFIER')
     }
-    stages{
-
-        stage('Test project and build docker image'){
-            parallel{
-                stage('Docker primary'){
-                    agent{
-                        label "dotnet-agent"
+    stages {
+        stage('Prepare environments') {
+            steps {
+                script {
+                    setGitEnvironmentVariables()
+                }
+            }
+        }
+        stage('Notify Slack') {
+            script {
+                notifySlack(currentBuild.result)
+            }
+        }
+        stage('Test project and build docker image') {
+            parallel {
+                stage('Docker primary') {
+                    agent {
+                        label 'dotnet-agent'
                     }
-                    stages{
-                        stage('Initialize'){
-                            steps{
-                                script{
+                    stages {
+                        stage('Initialize') {
+                            steps {
+                                script {
                                     notifyBuild('STARTED')
                                     echo "${BUILD_NUMBER} - ${env.BUILD_ID} on ${env.JENKINS_URL}"
                                     echo "Branch Specifier :: ${params.SPECIFIER}"
@@ -35,20 +46,24 @@ pipeline{
                                 }
                             }
                         }
-                        stage('Restore packages'){
-                            steps{
+                        stage('Restore packages') {
+                            steps {
                                 echo 'Run .NET dependency restorer'
                                 sh 'dotnet restore "ShoppingCart.sln"'
                             }
                         }
-                        stage('Build solution'){
-                            steps{
-                                echo 'Run dotnet build - Builds a project and all of its dependencies'
-                                sh 'dotnet build "ShoppingyCart.sln"'
+                        try {
+                            stage('Build solution') {
+                                steps {
+                                    echo 'Run dotnet build - Builds a project and all of its dependencies'
+                                    sh 'dotnet build "ShoppingyCart.sln"'
+                                }
                             }
+                        }catch (Exception ex) {
+                            echo "Docker build for ${currentBuild.currentStage.name} failed. Error: ${ex}"
                         }
-                        stage('Run Unit Tests'){
-                            steps{
+                        stage('Run Unit Tests') {
+                            steps {
                                 echo 'Run dotnet test - '
                                 sh '''
                                 cd ShoppingCartAPI.UnitTests
@@ -57,34 +72,34 @@ pipeline{
                                 '''
                             }
                         }
-                        stage('Publish Reports'){
-                            steps{
-                                script{
+                        stage('Publish Reports') {
+                            steps {
+                                script {
                                     branchName = getCurrentBranch()
                                     shortCommitHash = getShortCommitHash()
-                                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + "-" + shortCommitHash
-                                    sh "docker ps"
+                                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + '-' + shortCommitHash
+                                    sh 'docker ps'
                                     sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
-                                    sh "docker image ls"
+                                    sh 'docker image ls'
                                 }
                             }
                         }
                     }
                 }
-                stage('Docker secondary'){
-                    agent{
-                        label "docker-secondary"
+                stage('Docker secondary') {
+                    agent {
+                        label 'docker-secondary'
                     }
-                    stages{
-                        stage('Build docker image'){
-                            steps{
-                                script{
+                    stages {
+                        stage('Build docker image') {
+                            steps {
+                                script {
                                     branchName = getCurrentBranch()
                                     shortCommitHash = getShortCommitHash()
-                                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + "-" + shortCommitHash
-                                    sh "docker ps"
+                                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + '-' + shortCommitHash
+                                    sh 'docker ps'
                                     sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
-                                    sh "docker image ls"
+                                    sh 'docker image ls'
                                 }
                             }
                         }
@@ -92,31 +107,41 @@ pipeline{
                 }
             }
         }
-
     }
-    post{
-        always{
-            echo "================ BUILD END ================"
-            notifyBuild("${currentBuild.currentResult}")
+    post {
+        always {
+            echo 'Pipeline finished with status: ${currentBuild.result}'
+
+            if (currentBuild.result == 'FAILURE') {
+                def failedStages = currentBuild.getStage().findAll { it.result == 'FAILURE' }
+
+                echo 'Failes stages: ${failedStages}'
+
+                notifySlack(currentBuild.result, collectFailureLogs(failedStages))
+            }
+
+            if (currentBuild.result == 'SUCCESS') {
+                notifySlack(currentBuild.result)
+            }
         }
-        success{
-            echo "================ BUILD SUCCESS ================"
+        success {
+            echo '================ BUILD SUCCESS ================'
         }
-        failure{
-            echo "================ BUILD FAILURE ================"
+        failure {
+            echo '================ BUILD FAILURE ================'
         }
-        aborted{
-            echo "================ BUILD ABORTED ================"
+        aborted {
+            echo '================ BUILD ABORTED ================'
         }
-        unstable{
-            echo "================ BUILD UNSTABLE TEST================"
+        unstable {
+            echo '================ BUILD UNSTABLE TEST================'
         }
     }
 }
 
 def keepThisBuild() {
     currentBuild.setKeepLog(true)
-    currentBuild.setDescription("Test Description")
+    currentBuild.setDescription('Test Description')
 }
 
 def getShortCommitHash() {
@@ -124,11 +149,11 @@ def getShortCommitHash() {
 }
 
 def getChangeAuthorName() {
-    return sh(returnStdout: true, script: "git show -s --pretty=%an").trim()
+    return sh(returnStdout: true, script: 'git show -s --pretty=%an').trim()
 }
 
 def getChangeAuthorEmail() {
-    return sh(returnStdout: true, script: "git show -s --pretty=%ae").trim()
+    return sh(returnStdout: true, script: 'git show -s --pretty=%ae').trim()
 }
 
 def getChangeSet() {
@@ -140,7 +165,7 @@ def getChangeLog() {
 }
 
 def getCurrentBranch () {
-    return sh (
+    return sh(
             script: 'git rev-parse --abbrev-ref HEAD',
             returnStdout: true
     ).trim()
@@ -164,15 +189,15 @@ def notifyBuild(String buildStatus = 'STARTED') {
     // Default values
     def colorName = 'RED'
     def colorCode = '#FF0000'
-    def subject = "${buildStatus}: '${env.JOB_NAME} [${env.BUILD_NUMBER}]'" + branchName + ", " + shortCommitHash
+    def subject = "${buildStatus}: '${env.JOB_NAME} [${env.BUILD_NUMBER}]'" + branchName + ', ' + shortCommitHash
     def summary = "Started: Name:: ${env.JOB_NAME} \n " +
             "Build Number: ${env.BUILD_NUMBER} \n " +
             "Build URL: ${env.BUILD_URL} \n " +
-            "Short Commit Hash: " + shortCommitHash + " \n " +
-            "Branch Name: " + branchName + " \n " +
-            "Change Author: " + changeAuthorName + " \n " +
-            "Change Author Email: " + changeAuthorEmail + " \n " +
-            "Change Set: " + changeSet
+            'Short Commit Hash: ' + shortCommitHash + ' \n ' +
+            'Branch Name: ' + branchName + ' \n ' +
+            'Change Author: ' + changeAuthorName + ' \n ' +
+            'Change Author Email: ' + changeAuthorEmail + ' \n ' +
+            'Change Set: ' + changeSet
 
     if (buildStatus == 'STARTED') {
         color = 'YELLOW'
@@ -188,12 +213,67 @@ def notifyBuild(String buildStatus = 'STARTED') {
     echo(message: summary)
 
     return summary
-    
+
     // Send notifications
     // hipchatSend(color: color, notify: true, message: summary, token: "${env.HIPCHAT_TOKEN}",
     //     failOnError: true, room: "${env.HIPCHAT_ROOM}", sendAs: 'Jenkins', textFormat: true)
 
-    // if (buildStatus == 'FAILURE') {
-    //     emailext attachLog: true, body: summary, compressLog: true, recipientProviders: [brokenTestsSuspects(), brokenBuildSuspects(), culprits()], replyTo: 'noreply@yourdomain.com', subject: subject, to: 'mpatel@yourdomain.com'
-    // }
+// if (buildStatus == 'FAILURE') {
+//     emailext attachLog: true, body: summary, compressLog: true, recipientProviders: [brokenTestsSuspects(), brokenBuildSuspects(), culprits()], replyTo: 'noreply@yourdomain.com', subject: subject, to: 'mpatel@yourdomain.com'
+// }
+}
+
+def notifySlack(String buildStatus = 'STARTED', String logs = '') {
+    def commitHash = env.GIT_COMMIT_HASH
+    def commitAuthor = env.GIT_COMMIT_AUTHOR
+    def commitMessage = env.GIT_COMMIT_MESSAGE
+    def authorEmail = env.GIT_COMMIT_AUTHOR_EMAIL
+    def changes = env.GIT_CHANGES
+    def buildNumber = env.BUILD_NUMBER
+    def buildId = env.BUILD_ID
+    def jenkinsUrl = env.JENKINS_URL
+
+    // Default values
+    def colorCode = '#FF0000'
+    def subject = "${buildStatus}: '${env.JOB_NAME} [${env.BUILD_NUMBER}]'" + branchName + ', ' + shortCommitHash
+    def message = """
+        Build ${buildStatus} at ${new Date().format('dd-MM-yyyy HH:mm:ss')}
+        Author: ${commitAuthor}
+        Author email: ${authorEmail}
+        Commit message: ${commitMessage}
+        Commit hash: ${commitHash}
+        Build number: ${buildNumber}
+        Build ID: ${buildId}
+        Build status: ${buildStatus}
+        Subject: ${subject}
+        Jenkins URL: ${jenkinsUrl}
+        Logs: ${logs}
+    """
+
+    if (buildStatus == 'STARTED') {
+        colorCode = '#FFFF00'
+    } else if (buildStatus == 'SUCCESS') {
+        colorCode = '#00FF00'
+    } else {
+        colorCode = '#FF0000'
+    }
+}
+
+def collectFailureLogs(failedStages) {
+    String logOutput = ''
+
+    for (failure in failedStages) {
+        logOutput += "Failed stage: ${failure.stageName}\n"
+        logOutput += 'Failure log:\n'
+        logOutput += "${failure.log}\n"
+        logOutput += '\n'
+    }
+
+    return logOutput
+}
+
+def generateImageName() {
+    def stage = "${currentBuild.currentStage.parent.name}"
+    def imageName = "${env.IMAGE_PREFIX}${stage}${env.IMAGE_TAG}"
+    return imageName.toLowerCase()
 }
