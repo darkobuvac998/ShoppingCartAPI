@@ -122,6 +122,7 @@ pipeline {
 
                 if (currentBuild.result == 'FAILURE') {
                     echo "${currentBuild.result}"
+                    echo "${currentBuild}"
                 }
 
                 if (currentBuild.result == 'SUCCESS') {
