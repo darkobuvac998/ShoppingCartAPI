@@ -164,6 +164,10 @@ def getChangeLog() {
     return sh(returnStdout: true, script: "git log --date=short --pretty=format:'%ad %aN <%ae> %n%n%x09* %s%d%n%b'").trim()
 }
 
+def getCommitMessage() {
+    return sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
+}
+
 def getCurrentBranch () {
     return sh(
             script: 'git rev-parse --abbrev-ref HEAD',
