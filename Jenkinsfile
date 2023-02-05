@@ -253,15 +253,15 @@ def setGitEnvironmentVariables() {
 }
 
 def notifySlack(String buildStatus = 'STARTED', String logs = '') {
-    def commitHash = "${env.GIT_COMMIT_HASH}"
-    def commitAuthor = "${env.GIT_COMMIT_AUTHOR}"
-    def commitMessage = "${env.GIT_COMMIT_MESSAGE}"
-    def authorEmail = "${env.GIT_COMMIT_AUTHOR_EMAIL}"
-    def changes = "${env.GIT_CHANGES}"
-    def buildNumber = "${env.BUILD_NUMBER}"
-    def buildId = "${env.BUILD_ID}"
-    def jenkinsUrl = "${env.JENKINS_URL}"
-    def branch = "${env.GIT_BRANCH}"
+    def commitHash = env.GIT_COMMIT_HASH
+    def commitAuthor = env.GIT_COMMIT_AUTHOR
+    def commitMessage = env.GIT_COMMIT_MESSAGE
+    def authorEmail = env.GIT_COMMIT_AUTHOR_EMAIL
+    def changes = env.GIT_CHANGES
+    def buildNumber = env.BUILD_NUMBER
+    def buildId = env.BUILD_ID
+    def jenkinsUrl = env.JENKINS_URL
+    def branch = env.GIT_BRANCH
 
     // Default values
     def colorCode = '#FF0000'
