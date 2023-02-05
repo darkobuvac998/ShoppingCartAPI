@@ -24,13 +24,13 @@ pipeline {
                 }
             }
         }
-        stage('Notify Slack') {
-            steps {
-                script {
-                    notifySlack(currentBuild.result)
-                }
-            }
-        }
+        // stage('Notify Slack') {
+        //     steps {
+        //         script {
+        //             notifySlack(currentBuild.result)
+        //         }
+        //     }
+        // }
         stage('Test project and build docker image') {
             parallel {
                 stage('Docker primary') {
