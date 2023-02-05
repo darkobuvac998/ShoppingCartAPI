@@ -59,8 +59,8 @@ pipeline {
                                     sh 'dotnet build "ShoppingyCart.sln"'
                                 }
                             }
-                        }catch (Exception ex) {
-                            echo "Docker build for ${currentBuild.currentStage.name} failed. Error: ${ex}"
+                        }catch (err) {
+                            echo "Docker build for ${currentBuild.currentStage.name} failed. Error: ${err}"
                         }
                         stage('Run Unit Tests') {
                             steps {
