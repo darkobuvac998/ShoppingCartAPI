@@ -121,18 +121,6 @@ pipeline {
                 echo 'Pipeline finished with status:' + currentBuild.result
 
                 if (currentBuild.result == 'FAILURE') {
-                    def failedStages = []
-                    currentBuild.stages.each {
-                        stage ->
-                        if (stage.status == 'FAILED') {
-                            failedStages << stage
-                        }
-                    }
-
-                    echo 'Failes stages: ${failedStages}'
-
-                    notifySlack(currentBuild.result, collectFailureLogs(failedStages))
-
                     echo '${currentBuild.result}'
                 }
 
@@ -140,18 +128,6 @@ pipeline {
                     notifySlack(currentBuild.result)
                 }
             }
-        }
-        success {
-            echo '================ BUILD SUCCESS ================'
-        }
-        failure {
-            echo '================ BUILD FAILURE ================'
-        }
-        aborted {
-            echo '================ BUILD ABORTED ================'
-        }
-        unstable {
-            echo '================ BUILD UNSTABLE TEST================'
         }
     }
 }
@@ -283,6 +259,15 @@ def notifySlack(String buildStatus = 'STARTED', String logs = '') {
         Logs: ${logs}
     """
 
+    def messageFinal = "";
+    messageFinal += "Build" + buildStatus +" at ${new Date().format('dd-MM-yyyy HH:mm:ss')} \n"
+    messageFinal += "Branch: ${branch} \n"
+    messageFinal += "Author: ${commitAuthor} \n"
+    messageFinal += "Author email: ${authorEmail} \n"
+    messageFinal += "Commit message: ${commitMessage} \n"
+    messageFinal += "Commit hash: ${commitHash} \n"
+    messageFinal += "Build number: ${buildNumber} \n"
+
     if (buildStatus == 'STARTED') {
         colorCode = '#FFFF00'
     } else if (buildStatus == 'SUCCESS') {
@@ -292,6 +277,7 @@ def notifySlack(String buildStatus = 'STARTED', String logs = '') {
     }
 
     echo "${message}"
+    echo "${messageFinal}"
 }
 
 def collectFailureLogs(failedStages) {
