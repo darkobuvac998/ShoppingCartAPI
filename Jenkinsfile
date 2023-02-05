@@ -25,8 +25,10 @@ pipeline {
             }
         }
         stage('Notify Slack') {
-            script {
-                notifySlack(currentBuild.result)
+            steps {
+                script {
+                    notifySlack(currentBuild.result)
+                }
             }
         }
         stage('Test project and build docker image') {
@@ -52,15 +54,15 @@ pipeline {
                                 sh 'dotnet restore "ShoppingCart.sln"'
                             }
                         }
-                        try {
-                            stage('Build solution') {
+                        stage('Build solution') {
+                            try {
                                 steps {
                                     echo 'Run dotnet build - Builds a project and all of its dependencies'
                                     sh 'dotnet build "ShoppingyCart.sln"'
                                 }
+                            }catch (err) {
+                                echo 'Docker build for ${currentBuild.currentStage.name} failed. Error: ${ex}'
                             }
-                        }catch (err) {
-                            echo "Docker build for ${currentBuild.currentStage.name} failed. Error: ${err}"
                         }
                         stage('Run Unit Tests') {
                             steps {
