@@ -116,9 +116,9 @@ pipeline {
     post {
         always {
             script {
-                echo 'Pipeline finished with status: ${currentBuild.result}'
+                echo 'Pipeline finished with status:' + currentBuild.result
 
-                if (jenkins.currentBuild.result == 'FAILURE') {
+                if (currentBuild.result == 'FAILURE') {
                     def failedStages = []
                     currentBuild.stages.each {
                         stage ->
