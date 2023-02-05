@@ -121,7 +121,7 @@ pipeline {
                 echo 'Pipeline finished with status:' + currentBuild.result
 
                 if (currentBuild.result == 'FAILURE') {
-                    echo '${currentBuild.result}'
+                    echo "${currentBuild.result}"
                 }
 
                 if (currentBuild.result == 'SUCCESS') {
@@ -211,13 +211,6 @@ def notifyBuild(String buildStatus = 'STARTED') {
 
     return summary
 
-    // Send notifications
-    // hipchatSend(color: color, notify: true, message: summary, token: "${env.HIPCHAT_TOKEN}",
-    //     failOnError: true, room: "${env.HIPCHAT_ROOM}", sendAs: 'Jenkins', textFormat: true)
-
-// if (buildStatus == 'FAILURE') {
-//     emailext attachLog: true, body: summary, compressLog: true, recipientProviders: [brokenTestsSuspects(), brokenBuildSuspects(), culprits()], replyTo: 'noreply@yourdomain.com', subject: subject, to: 'mpatel@yourdomain.com'
-// }
 }
 
 def setGitEnvironmentVariables() {
@@ -245,7 +238,7 @@ def notifySlack(String buildStatus = 'STARTED', String logs = '') {
     def colorCode = '#FF0000'
     def subject = "${buildStatus}: '${env.JOB_NAME} [${env.BUILD_NUMBER}]'" + branch + ', ' + shortCommitHash
     def message = """
-        Build ${buildStatus} at ${new Date().format('dd-MM-yyyy HH:mm:ss')}
+        Build ${currentBuild.result} at ${new Date().format('dd-MM-yyyy HH:mm:ss')}
         Branch: ${branch}
         Author: ${commitAuthor}
         Author email: ${authorEmail}
@@ -253,20 +246,11 @@ def notifySlack(String buildStatus = 'STARTED', String logs = '') {
         Commit hash: ${commitHash}
         Build number: ${buildNumber}
         Build ID: ${buildId}
-        Build status: ${buildStatus}
+        Build status: ${currentBuild.result}
         Subject: ${subject}
         Jenkins URL: ${jenkinsUrl}
         Logs: ${logs}
     """
-
-    def messageFinal = "";
-    messageFinal += "Build" + buildStatus +" at ${new Date().format('dd-MM-yyyy HH:mm:ss')} \n"
-    messageFinal += "Branch: ${branch} \n"
-    messageFinal += "Author: ${commitAuthor} \n"
-    messageFinal += "Author email: ${authorEmail} \n"
-    messageFinal += "Commit message: ${commitMessage} \n"
-    messageFinal += "Commit hash: ${commitHash} \n"
-    messageFinal += "Build number: ${buildNumber} \n"
 
     if (buildStatus == 'STARTED') {
         colorCode = '#FFFF00'
@@ -277,7 +261,6 @@ def notifySlack(String buildStatus = 'STARTED', String logs = '') {
     }
 
     echo "${message}"
-    echo "${messageFinal}"
 }
 
 def collectFailureLogs(failedStages) {
