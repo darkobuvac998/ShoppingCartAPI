@@ -223,6 +223,16 @@ def notifyBuild(String buildStatus = 'STARTED') {
 // }
 }
 
+def setGitEnvironmentVariables() {
+    env.IMAGE_TAG = getCurrentBranch()
+    env.GIT_BRANCH = getCurrentBranch()
+    env.GIT_COMMIT_HASH = getShortCommitHash()
+    env.GIT_COMMIT_AUTHOR = getCommitAuthorName()
+    env.GIT_COMMIT_MESSAGE = getCommitMessage()
+    env.GIT_COMMIT_AUTHOR_EMAIL = getCommitAuthorName()
+    env.GIT_CHANGES = getChangeSet()
+}
+
 def notifySlack(String buildStatus = 'STARTED', String logs = '') {
     def commitHash = env.GIT_COMMIT_HASH
     def commitAuthor = env.GIT_COMMIT_AUTHOR
