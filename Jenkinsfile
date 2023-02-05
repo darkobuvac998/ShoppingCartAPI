@@ -55,13 +55,9 @@ pipeline {
                             }
                         }
                         stage('Build solution') {
-                            try {
-                                steps {
-                                    echo 'Run dotnet build - Builds a project and all of its dependencies'
-                                    sh 'dotnet build "ShoppingyCart.sln"'
-                                }
-                            }catch (err) {
-                                echo 'Docker build for ${currentBuild.currentStage.name} failed. Error: ${ex}'
+                            steps {
+                                echo 'Run dotnet build - Builds a project and all of its dependencies'
+                                sh 'dotnet build "ShoppingyCart.sln"'
                             }
                         }
                         stage('Run Unit Tests') {
@@ -112,18 +108,20 @@ pipeline {
     }
     post {
         always {
-            echo 'Pipeline finished with status: ${currentBuild.result}'
+            script {
+                echo 'Pipeline finished with status: ${currentBuild.result}'
 
-            if (currentBuild.result == 'FAILURE') {
-                def failedStages = currentBuild.getStage().findAll { it.result == 'FAILURE' }
+                if (currentBuild.result == 'FAILURE') {
+                    def failedStages = currentBuild.getStage().findAll { it.result == 'FAILURE' }
 
-                echo 'Failes stages: ${failedStages}'
+                    echo 'Failes stages: ${failedStages}'
 
-                notifySlack(currentBuild.result, collectFailureLogs(failedStages))
-            }
+                    notifySlack(currentBuild.result, collectFailureLogs(failedStages))
+                }
 
-            if (currentBuild.result == 'SUCCESS') {
-                notifySlack(currentBuild.result)
+                if (currentBuild.result == 'SUCCESS') {
+                    notifySlack(currentBuild.result)
+                }
             }
         }
         success {
