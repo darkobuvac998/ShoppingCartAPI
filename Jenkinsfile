@@ -148,11 +148,11 @@ def getShortCommitHash() {
     return sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
 }
 
-def getChangeAuthorName() {
+def getCommitAuthorName() {
     return sh(returnStdout: true, script: 'git show -s --pretty=%an').trim()
 }
 
-def getChangeAuthorEmail() {
+def getCommitAuthorEmail() {
     return sh(returnStdout: true, script: 'git show -s --pretty=%ae').trim()
 }
 
@@ -181,8 +181,8 @@ def notifyBuild(String buildStatus = 'STARTED') {
 
     def branchName = getCurrentBranch()
     def shortCommitHash = getShortCommitHash()
-    def changeAuthorName = getChangeAuthorName()
-    def changeAuthorEmail = getChangeAuthorEmail()
+    def changeAuthorName = getCommitAuthorName()
+    def changeAuthorEmail = getCommitAuthorEmail()
     def changeSet = getChangeSet()
     def changeLog = getChangeLog()
 
@@ -229,7 +229,7 @@ def setGitEnvironmentVariables() {
     env.GIT_COMMIT_HASH = getShortCommitHash()
     env.GIT_COMMIT_AUTHOR = getCommitAuthorName()
     env.GIT_COMMIT_MESSAGE = getCommitMessage()
-    env.GIT_COMMIT_AUTHOR_EMAIL = getCommitAuthorName()
+    env.GIT_COMMIT_AUTHOR_EMAIL = getCommitAuthorEmail()
     env.GIT_CHANGES = getChangeSet()
 }
 
