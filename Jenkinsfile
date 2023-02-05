@@ -112,7 +112,13 @@ pipeline {
                 echo 'Pipeline finished with status: ${currentBuild.result}'
 
                 if (currentBuild.result == 'FAILURE') {
-                    def failedStages = currentBuild.getStage().findAll { it.result == 'FAILURE' }
+                    def failedStages = []
+                    currentBuild.stages.each {
+                        stage ->
+                        if (stage.status == 'FAILED') {
+                            failedStages << stage
+                        }
+                    }
 
                     echo 'Failes stages: ${failedStages}'
 
@@ -271,15 +277,22 @@ def notifySlack(String buildStatus = 'STARTED', String logs = '') {
     } else {
         colorCode = '#FF0000'
     }
+
+    echo "${message}"
 }
 
 def collectFailureLogs(failedStages) {
     String logOutput = ''
 
+    if (failedStages.size() > 0) {
+    }
+
     for (failure in failedStages) {
-        logOutput += "Failed stage: ${failure.stageName}\n"
+        logOutput += "Failed stage: ${failure.name}\n"
         logOutput += 'Failure log:\n'
-        logOutput += "${failure.log}\n"
+        failure.log.each {
+            logLine -> logOutput += '${logLine}: \n'
+        }
         logOutput += '\n'
     }
 
