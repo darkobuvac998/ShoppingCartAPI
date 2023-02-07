@@ -40,17 +40,15 @@ pipeline {
             }
         }
         stage('Notify Slack') {
-            environment {
-                IMAGE_TAG = utils.getCurrentBranch()
-                GIT_BRANCH = utils.getCurrentBranch()
-                GIT_COMMIT_HASH = utils.getShortCommitHash()
-                GIT_COMMIT_AUTHOR = utils.getCommitAuthorName()
-                GIT_COMMIT_MESSAGE = utils.getCommitMessage()
-                GIT_COMMIT_AUTHOR_EMAIL = utils.getCommitAuthorEmail()
-                GIT_CHANGES = utils.getChangeSet()
-            }
             steps {
                 script {
+                    env.IMAGE_TAG = utils.getCurrentBranch()
+                    env.GIT_BRANCH = utils.getCurrentBranch()
+                    env.GIT_COMMIT_HASH = utils.getShortCommitHash()
+                    env.GIT_COMMIT_AUTHOR = utils.getCommitAuthorName()
+                    env.GIT_COMMIT_MESSAGE = utils.getCommitMessage()
+                    env.GIT_COMMIT_AUTHOR_EMAIL = utils.getCommitAuthorEmail()
+                    env.GIT_CHANGES = utils.getChangeSet()
                     utils.notifySlack(currentBuild.result)
                 }
             }
