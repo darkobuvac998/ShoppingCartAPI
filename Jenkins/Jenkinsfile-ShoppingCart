@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     def rootDir = pwd()
-                    utils = load "${rootDir}/utils.groovy"
+                    utils = load "${rootDir}/Jenkins/utils.groovy"
                 }
             }
         }
