@@ -31,7 +31,7 @@ pipeline {
                 script {
                     def rootDir = pwd()
                     utils = load "${rootDir}/Jenkins/utils.groovy"
-                    sh '${utils.getCurrentBranch()}'
+                    sh "${utils.getCurrentBranch()}"
                 }
             }
         }
