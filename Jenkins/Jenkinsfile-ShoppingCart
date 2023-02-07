@@ -1,0 +1,141 @@
+#!groovy
+
+def utils
+
+pipeline {
+    agent any
+    options {
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '1', numToKeepStr: '10'))
+        timestamps()
+        timeout time:10, unit:'MINUTES'
+    }
+    environment {
+        BUILD_NUMBER = "${env.BUILD_NUMBER}"
+        IMAGE_VERSION = "v_${BUILD_NUMBER}"
+        APP_NAME = 'ShoppingCartAPI'
+        GIT_URL = "git@github.com:darkobuvac998/${APP_NAME}.git"
+    }
+    parameters {
+        string(defaultValue: 'dev', description: 'Branch Specifier', name: 'SPECIFIER')
+    }
+    stages {
+        stage('Initialization') {
+            steps {
+                script {
+                    def rootDir = pwd()
+                    utils = load "${rootDir}/utils.groovy"
+                }
+            }
+        }
+        stage('Git Chckout') {
+            steps {
+                git branch: 'dev', credentialsId: 'jenkins-github', url: 'git@github.com:darkobuvac998/ShoppingCartAPI.git'
+            }
+        }
+        stage('Notify Slack') {
+            environment {
+                IMAGE_TAG = utils.getCurrentBranch()
+                GIT_BRANCH = utils.getCurrentBranch()
+                GIT_COMMIT_HASH = utils.getShortCommitHash()
+                GIT_COMMIT_AUTHOR = utils.getCommitAuthorName()
+                GIT_COMMIT_MESSAGE = utils.getCommitMessage()
+                GIT_COMMIT_AUTHOR_EMAIL = utils.getCommitAuthorEmail()
+                GIT_CHANGES = utils.getChangeSet()
+            }
+            steps {
+                script {
+                    utils.notifySlack(currentBuild.result)
+                }
+            }
+        }
+        stage('Test project and build docker image') {
+            parallel {
+                stage('Docker primary') {
+                    agent {
+                        label 'dotnet-agent'
+                    }
+                    stages {
+                        stage('Initialize') {
+                            steps {
+                                script {
+                                    utils.notifyBuild('STARTED')
+                                    echo "${BUILD_NUMBER} - ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                                    echo "Branch Specifier :: ${params.SPECIFIER}"
+                                    sh 'rm -rf target/universal/*.zip'
+                                }
+                            }
+                        }
+                        stage('Restore packages') {
+                            steps {
+                                echo 'Run .NET dependency restorer'
+                                sh 'dotnet restore "ShoppingCart.sln"'
+                            }
+                        }
+                        stage('Build solution') {
+                            steps {
+                                echo 'Run dotnet build - Builds a project and all of its dependencies'
+                                sh 'dotnet build "ShoppingyCart.sln"'
+                            }
+                        }
+                        stage('Run Unit Tests') {
+                            steps {
+                                echo 'Run dotnet test - '
+                                sh '''
+                                cd ShoppingCartAPI.UnitTests
+                                dotnet test "ShoppingCartAPI.UnitTests.csproj"
+                                cd ../
+                                '''
+                            }
+                        }
+                        stage('Publish Reports') {
+                            steps {
+                                script {
+                                    branchName = utils.getCurrentBranch()
+                                    shortCommitHash = utils.getShortCommitHash()
+                                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + '-' + shortCommitHash
+                                    sh 'docker ps'
+                                    sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
+                                    sh 'docker image ls'
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Docker secondary') {
+                    agent {
+                        label 'docker-secondary'
+                    }
+                    stages {
+                        stage('Build docker image') {
+                            steps {
+                                script {
+                                    branchName = utils.getCurrentBranch()
+                                    shortCommitHash = utils.getShortCommitHash()
+                                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + '-' + shortCommitHash
+                                    sh 'docker ps'
+                                    sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
+                                    sh 'docker image ls'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                echo 'Pipeline finished with status:' + currentBuild.result
+
+                if (currentBuild.result == 'FAILURE') {
+                    echo "${currentBuild.result}"
+                }
+
+                if (currentBuild.result == 'SUCCESS') {
+                    utils.notifySlack(currentBuild.result)
+                }
+            }
+        }
+    }
+}
