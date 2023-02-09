@@ -90,7 +90,7 @@ pipeline {
                         label 'docker-secondary'
                     }
                     stages {
-                        createDockerImageBuildStage('Build docker image')
+                        eval(createDockerImageBuildStage('Build docker image'))
                     }
                 }
             }
@@ -114,18 +114,18 @@ pipeline {
 }
 
 def createDockerImageBuildStage(stageName) {
-    return stage("${stageName}") {
-        steps {
-            script {
-                branchName = getCurrentBranch()
-                shortCommitHash = getShortCommitHash()
-                IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + '-' + shortCommitHash
-                sh 'docker ps'
-                sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
-                sh 'docker image ls'
-            }
-        }
-    }
+    return "stage('${stageName}') {\n" +
+           "  steps {\n" +
+           "    script {\n" +
+           "      branchName = getCurrentBranch()\n" +
+           "      shortCommitHash = getShortCommitHash()\n" +
+           "      IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + '-' + shortCommitHash\n" +
+           "      sh 'docker ps'\n" +
+           "      sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."\n" +
+           "      sh 'docker image ls'\n" +
+           "    }\n" +
+           "  }\n" +
+           "}\n"
 }
 
 def keepThisBuild() {
