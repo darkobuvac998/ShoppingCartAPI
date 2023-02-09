@@ -89,11 +89,7 @@ pipeline {
                         label 'docker-secondary'
                     }
                     stages {
-                        stage('Build docker image') {
-                            steps {
-                                createDockerImageBuildStage('BUILD')
-                            }
-                        }
+                        createDockerImageBuildStage('BUILD Docker image')
                     }
                 }
             }
