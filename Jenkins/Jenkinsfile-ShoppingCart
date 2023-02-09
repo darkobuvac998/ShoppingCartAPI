@@ -114,7 +114,7 @@ pipeline {
 }
 
 def createDockerImageBuildStage(stageName) {
-    stage("${stageName}") {
+    def dynamicStage = stage("${stageName}") {
         steps {
             script {
                 branchName = getCurrentBranch()
@@ -127,7 +127,7 @@ def createDockerImageBuildStage(stageName) {
         }
     }
 
-    return stage
+    return dynamicStage
 }
 
 def keepThisBuild() {
