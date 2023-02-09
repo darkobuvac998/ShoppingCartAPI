@@ -1,0 +1,18 @@
+
+node {
+  buildStageDynamically('Test stage').call()
+}
+
+def buildStageDynamically(stageName) {
+  return stage("${stageName}") {
+    node {
+      label 'dotnet-agent'
+    }
+
+    steps {
+      script {
+        sh 'Hello'
+      }
+    }
+  }
+}
