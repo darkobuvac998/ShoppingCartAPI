@@ -1,6 +1,5 @@
 
 node {
-  stages {
     buildStageDynamically('Test stage').call()
     buildStageDynamically('Test stage').call()
     buildStageDynamically('Test stage').call()
@@ -14,7 +13,6 @@ node {
     buildStageDynamically('Test stage').call()
     buildStageDynamically('Test stage').call()
     buildStageDynamically('Test stage').call()
-  }
 }
 
 def buildStageDynamically(stageName) {
