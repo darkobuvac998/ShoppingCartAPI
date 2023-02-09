@@ -61,7 +61,7 @@ def getBuildStages(service, imageName, imageTag) {
     def imageExists
 
     stage('CHECK DOES IMAGE EXISTS'){
-      imageExists = doesImageExists("${imageName}${imageTag}")
+      imageExists = doesImageExists("${imageName}:${imageTag}")
       sh "echo Checkind does ${imageName}${imageTag} exists"
     }
 
