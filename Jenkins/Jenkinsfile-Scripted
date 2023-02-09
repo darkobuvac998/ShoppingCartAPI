@@ -2,10 +2,10 @@
 node {
   stage('Run parallel') {
     parallel admin: {
-      buildStageDynamically('test').call()
+      buildStagesDynamically('test', '', 'shopping-cart', 'latest').call()
     },
     test: {
-      buildStageDynamically('test').call()
+      buildStagesDynamically('test', '', 'shopping-cart', 'latest').call()
     }
   }
 }
@@ -22,3 +22,31 @@ def buildStageDynamically(stageName) {
   }
 }
 
+def buildStagesDynamically(service, buildAgent, imageName, imageTag) {
+  return {
+    def oldHash
+    def newHash
+    stage('Get old image hash') {
+      oldHash = getImageHash("${imageName}:${imageTag}")
+      sh 'echo $oldHash'
+    }
+    stage('Build docker image') {
+      sh 'docker build -t codaxy_$service:$imageTag -f docker/$service/Dockerfile .'
+      newHash = getImageHash("${imageName}:${imageTag}")
+      sh 'echo $newHash'
+    }
+
+    if (oldHash != newHash) {
+      stage('Pack image') {
+        sh 'docker save codaxy_$service:$imageTag | gzip > ../sp1ne/images/codaxy_$service:$imageTag.tar.gz '
+      }
+      stage('Deploy image') {
+        sh 'Deploying codaxy_$service:$imageTag...'
+      }
+    }
+  }
+}
+
+def getImageHash(image) {
+  return sh(returnStdout: true, script: "docker inspect -f \"{{.Id}}\" ${image}").trim()
+}
