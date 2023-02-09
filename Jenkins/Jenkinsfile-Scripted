@@ -28,14 +28,93 @@ node {
       node {
         label 'dotnet-agent'
       }
-      getBuildStages('administration', "${env.IMAGE_TAG}").call()
+      getBuildStages('administration').call()
     },
-    TEST: {
+    CONDUCTOR: {
       node {
         label 'dotnet-agent'
       }
-      getBuildStages('test', "${env.IMAGE_TAG}").call()
-    }
+      getBuildStages('conductor').call()
+    },
+    INFOBLOX: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('infoblox').call()
+    },
+    MIGRATION: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('migration').call()
+    },
+    OSS10: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('oss10').call()
+    },
+    SIGMA: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('sigma').call()
+    },
+    UNICONFIG: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('uniconfig').call()
+    },
+    SPINE-TMF: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('spine-tmf', true, "NugetSp1neTmf", "TMF_PAT", "TMF_PAT_USERNAME").call()
+    },
+    AUTOBOOT: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('autoboot').call()
+    },
+    KEA: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('kea').call()
+    },
+    KEA: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('kea').call()
+    },
+    KEA-DHCP: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('kea-dhcp').call()
+    },
+    TFTP: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('tftp').call()
+    },
+    RIPE: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('ripe').call()
+    },
+    NGINX: {
+      node {
+        label 'dotnet-agent'
+      }
+      getBuildStages('nginx', true, "NugetSp1neTmf", "TMF_PAT", "TMF_PAT_USERNAME").call()
+    },
+
   }
 
   stage('LIST ALL DOCKER IMAGES') {
@@ -46,16 +125,15 @@ node {
     sh 'docker image ls | grep codaxy'
   }
 
-  if(getImagesToRemove() != ''){
+  if (getImagesToRemove() != '') {
     stage('CLEANUP') {
         sh 'docker container prune -f'
         sh 'docker rmi $(docker images --filter "dangling=true" -q --no-trunc)'
     }
   }
-
 }
 
-def getBuildStages(service, imageTag) {
+def getBuildStages(service, useCredentials = false, credentialsName = '', pwdVariable = '', usernameVariable = '') {
   return {
     def oldHash
     def newHash
@@ -64,29 +142,39 @@ def getBuildStages(service, imageTag) {
     def imageName = "${env.IMAGE_PREFIX}${service}"
 
     stage('CHECK DOES IMAGE EXISTS') {
-      imageExists = doesImageExists("${imageName}:${imageTag}")
-      sh "echo Checkind does ${imageName}${imageTag} exists"
+      imageExists = doesImageExists("${imageName}:${env.IMAGE_TAG}")
+      sh "echo Checkind does ${imageName}${env.IMAGE_TAG} exists"
     }
 
     if (imageExists != '') {
       stage('GET OLD IMAGE HASH') {
-        oldHash = getImageHash("${imageName}:${imageTag}")
+        oldHash = getImageHash("${imageName}:${env.IMAGE_TAG}")
         sh "echo ${oldHash}"
       }
     }
 
-    stage('BUILD DOCKER IMAGE') {
-      sh "docker build -t ${imageName}:${imageTag} -f docker/Dockerfile ."
-      newHash = getImageHash("${imageName}:${imageTag}")
-      sh "echo ${newHash}"
+    if(useCredentials == true){
+      stage('BUILD DOCKER IMAGE') {
+        withCredentials([usernamePassword(credentialsId: "${credentialsName}", passwordVariable: "${pwdVariable}", usernameVariable: "${usernameVariable}")]){
+          sh "docker build -t ${imageName}:${env.IMAGE_TAG} --build-arg TMF_PAT_USERNAME=${usernameVariable} --build-arg TMF_PAT=${pwdVariable} -f docker/${service}/Dockerfile ."
+          newHash = getImageHash("${imageName}:${env.IMAGE_TAG}")
+          sh "echo ${newHash}"
+        }
+      }
+    }else{
+      stage('BUILD DOCKER IMAGE') {
+        sh "docker build -t ${imageName}:${env.IMAGE_TAG} -f docker/${service}/Dockerfile ."
+        newHash = getImageHash("${imageName}:${env.IMAGE_TAG}")
+        sh "echo ${newHash}"
+      }
     }
 
     if (oldHash != newHash) {
       stage('PACK IMAGE') {
-        sh "docker save ${imageName}:${imageTag} | gzip > ../sp1ne/images/${imageName}:${imageTag}.tar.gz "
+        sh "docker save ${imageName}:${env.IMAGE_TAG} | gzip > ../sp1ne/images/${imageName}:${env.IMAGE_TAG}.tar.gz "
       }
       stage('DEPLOY IMAGE') {
-        sh "Deploying ${imageName}:${imageTag}..."
+        sh "Deploying ${imageName}:${env.IMAGE_TAG}..."
       }
     }else {
       stage('DEPLOY SKIPPED') {
@@ -135,7 +223,7 @@ def getCurrentBranch () {
   ).trim()
 }
 
-def getImagesToRemove(){
+def getImagesToRemove() {
   return sh(returnStdout: true, script: "docker images --filter \"dangling=true\" -q --no-trunc").trim()
 }
 
