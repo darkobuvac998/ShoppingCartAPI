@@ -85,14 +85,7 @@ pipeline {
                         }
                     }
                 }
-                stage('Docker secondary') {
-                    agent {
-                        label 'docker-secondary'
-                    }
-                    stages {
-                        eval(createDockerImageBuildStage('Build docker image'))
-                    }
-                }
+                createDockerImageBuildStage('Build docker image')
             }
         }
     }
