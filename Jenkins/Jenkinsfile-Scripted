@@ -46,10 +46,13 @@ node {
     sh 'docker image ls | grep codaxy'
   }
 
-  stage('CLEANUP') {
-    sh 'docker container prune -f'
-    sh 'docker rmi $(docker images --filter "dangling=true" -q --no-trunc)'
+  if(getImagesToRemove() != ''){
+    stage('CLEANUP') {
+        sh 'docker container prune -f'
+        sh 'docker rmi $(docker images --filter "dangling=true" -q --no-trunc)'
+    }
   }
+
 }
 
 def getBuildStages(service, imageTag) {
@@ -130,6 +133,10 @@ def getCurrentBranch () {
           script: 'git name-rev --name-only HEAD',
           returnStdout: true
   ).trim()
+}
+
+def getImagesToRemove(){
+  return sh(returnStdout: true, script: "docker images --filter "dangling=true" -q --no-trunc").trim()
 }
 
 def getDockerImageTag() {
