@@ -1,7 +1,5 @@
 #!groovy
 
-def utils
-
 pipeline {
     agent any
     options {
@@ -26,15 +24,6 @@ pipeline {
         string(defaultValue: 'dev', description: 'Branch Specifier', name: 'SPECIFIER')
     }
     stages {
-        stage('Initialization') {
-            steps {
-                script {
-                    def rootDir = pwd()
-                    utils = load "${rootDir}/Jenkins/utils.groovy"
-                    sh "${utils.getCurrentBranch()}"
-                }
-            }
-        }
         stage('Git Chckout') {
             steps {
                 git branch: 'dev', credentialsId: 'jenkins-github', url: 'git@github.com:darkobuvac998/ShoppingCartAPI.git'
@@ -43,14 +32,14 @@ pipeline {
         stage('Notify Slack') {
             steps {
                 script {
-                    env.IMAGE_TAG = utils.getCurrentBranch()
-                    env.GIT_BRANCH = utils.getCurrentBranch()
-                    env.GIT_COMMIT_HASH = utils.getShortCommitHash()
-                    env.GIT_COMMIT_AUTHOR = utils.getCommitAuthorName()
-                    env.GIT_COMMIT_MESSAGE = utils.getCommitMessage()
-                    env.GIT_COMMIT_AUTHOR_EMAIL = utils.getCommitAuthorEmail()
-                    env.GIT_CHANGES = utils.getChangeSet()
-                    utils.notifySlack(currentBuild.result)
+                    env.IMAGE_TAG = getCurrentBranch()
+                    env.GIT_BRANCH = getCurrentBranch()
+                    env.GIT_COMMIT_HASH = getShortCommitHash()
+                    env.GIT_COMMIT_AUTHOR = getCommitAuthorName()
+                    env.GIT_COMMIT_MESSAGE = getCommitMessage()
+                    env.GIT_COMMIT_AUTHOR_EMAIL = getCommitAuthorEmail()
+                    env.GIT_CHANGES = getChangeSet()
+                    notifySlack(currentBuild.result)
                 }
             }
         }
@@ -64,7 +53,7 @@ pipeline {
                         stage('Initialize') {
                             steps {
                                 script {
-                                    utils.notifyBuild('STARTED')
+                                    notifyBuild('STARTED')
                                     echo "${BUILD_NUMBER} - ${env.BUILD_ID} on ${env.JENKINS_URL}"
                                     echo "Branch Specifier :: ${params.SPECIFIER}"
                                     sh 'rm -rf target/universal/*.zip'
@@ -96,8 +85,8 @@ pipeline {
                         stage('Publish Reports') {
                             steps {
                                 script {
-                                    branchName = utils.getCurrentBranch()
-                                    shortCommitHash = utils.getShortCommitHash()
+                                    branchName = getCurrentBranch()
+                                    shortCommitHash = getShortCommitHash()
                                     IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + '-' + shortCommitHash
                                     sh 'docker ps'
                                     sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
@@ -132,7 +121,7 @@ pipeline {
                 }
 
                 if (currentBuild.result == 'SUCCESS') {
-                    utils.notifySlack(currentBuild.result)
+                    notifySlack(currentBuild.result)
                 }
             }
         }
@@ -143,8 +132,8 @@ def createDockerImageBuildStage(stageName) {
     stage("${stageName}") {
         steps {
             script {
-                branchName = utils.getCurrentBranch()
-                shortCommitHash = utils.getShortCommitHash()
+                branchName = getCurrentBranch()
+                shortCommitHash = getShortCommitHash()
                 IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + '-' + shortCommitHash
                 sh 'docker ps'
                 sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
