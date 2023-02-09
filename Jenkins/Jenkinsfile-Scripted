@@ -1,5 +1,9 @@
 
 node {
+  stage('Git checkout') {
+    checkout scmGit(branches: [[name: 'dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins-github', url: 'git@github.com:darkobuvac998/ShoppingCartAPI.git']])
+  }
+
   stage('Run parallel') {
     parallel ADMINISTRATION: {
       node {
@@ -39,10 +43,10 @@ def buildStagesDynamically(service, buildAgent, imageName, imageTag) {
     }
 
     if (env.oldHash != env.newHash) {
-      stage("Pack image") {
+      stage('Pack image') {
         sh "docker save codaxy_${service}:${imageTag} | gzip > ../sp1ne/images/codaxy_${service}:${imageTag}.tar.gz "
       }
-      stage("Deploy image") {
+      stage('Deploy image') {
         sh "Deploying codaxy_${service}:${imageTag}..."
       }
     }
