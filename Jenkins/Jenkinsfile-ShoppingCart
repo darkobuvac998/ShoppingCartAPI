@@ -86,8 +86,13 @@ pipeline {
                     }
                 }
                 stage('Docker secondary') {
-                    node(label: 'docker-secondary') {
-                        createDockerImageBuildStage('Build docker image').call()
+                    steps {
+                        script {
+                            node {
+                                label 'docker-secondary'
+                                createDockerImageBuildStage('Build docker image').call()
+                            }
+                        }
                     }
                 }
             }
