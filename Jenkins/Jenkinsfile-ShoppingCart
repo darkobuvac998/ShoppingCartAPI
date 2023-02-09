@@ -86,13 +86,11 @@ pipeline {
                     }
                 }
                 stage('Docker secondary') {
-                    steps {
-                        script {
-                            node {
-                                label 'docker-secondary'
-                            }
-                            createDockerImageBuildStage('Build docker image').call()
-                        }
+                    agent {
+                        label 'docker-secondary'
+                    }
+                    stages {
+                        evaluate(createDockerImageBuildStage('Build docker image'))
                     }
                 }
             }
