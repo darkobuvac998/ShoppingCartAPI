@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["ShoppingCart.API/ShoppingyCart.API.csproj", "ShoppingCart.API/"]
+COPY ["ShoppingCart.API/ShoppingCart.API.csproj", "ShoppingCart.API/"]
 COPY ["ShoppingCart.Repositories/ShoppingCart.Repositories.csproj", "ShoppingCart.Repositories/"]
 COPY ["ShoppingCart.Contracts/ShoppingCart.Contracts.csproj", "ShoppingCart.Contracts/"]
 COPY ["ShoppingCart.Entities/ShoppingCart.Entities.csproj", "ShoppingCart.Entities/"]
