@@ -90,10 +90,12 @@ pipeline {
                         label 'docker-secondary'
                     }
                     stages {
-                        stage('Spawn stages dynamically'){
+                        stage('Spawn stages dynamically') {
                             stagesDynamic += createDockerImageBuildStage('BUILD Docker image')
                         }
-                        stagesDynamic
+                        script {
+                            stagesDynamic += createDockerImageBuildStage('BUILD Docker image')
+                        }
                     }
                 }
             }
