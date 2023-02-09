@@ -126,6 +126,8 @@ def createDockerImageBuildStage(stageName) {
             }
         }
     }
+
+    return stage
 }
 
 def keepThisBuild() {
