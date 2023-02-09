@@ -6,7 +6,6 @@ node {
 
   stage('NOTIFY SLACK') {
     sh 'echo Send notification'
-    sh "echo ${currentBuild.currentStage}"
   }
 
   stage('SET ENVIRONMENT VARIABLES') {
