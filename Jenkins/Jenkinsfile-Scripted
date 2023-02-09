@@ -29,12 +29,6 @@ node {
     sh 'docker image ls | grep codaxy'
   }
 
-  post{
-      always{
-        sh 'docker container prune -f'
-        sh 'docker rmi $(docker images --filter "dangling=true" -q --no-trunc)'
-      }
-  }
 }
 
 def getBuildStages(service, imageName, imageTag) {
