@@ -90,8 +90,8 @@ pipeline {
                         script {
                             node {
                                 label 'docker-secondary'
-                                createDockerImageBuildStage('Build docker image').call()
                             }
+                            createDockerImageBuildStage('Build docker image').call()
                         }
                     }
                 }
