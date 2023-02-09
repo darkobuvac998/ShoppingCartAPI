@@ -40,7 +40,7 @@ def buildStagesDynamically(service, buildAgent, imageName, imageTag) {
       }
     }else {
       stage('Deploy skipped') {
-        sh 'There are no changes. Skipping the deployment!'
+        echo('There are no changes. Skipping deployment.')
       }
     }
   }
