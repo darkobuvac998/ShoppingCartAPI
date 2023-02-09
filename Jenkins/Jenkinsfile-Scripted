@@ -1,10 +1,13 @@
 
 node {
-    stage('Run parallel') {
-      parallel
-        Administration: {buildStageDynamically('Admin').call()},
-        TMF: {buildStageDynamically('TMF').call()}
+  stage('Run parallel') {
+    parallel admin: {
+      buildStageDynamically('test').call()
+    },
+    test: {
+      buildStageDynamically('test').call()
     }
+  }
 }
 
 def buildStageDynamically(stageName) {
