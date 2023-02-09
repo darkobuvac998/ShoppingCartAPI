@@ -1,7 +1,7 @@
 
 node {
 
-  stage('Git checkout') {
+  stage('GIT CHECKOUT') {
     checkout scmGit(branches: [[name: 'dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins-github', url: 'git@github.com:darkobuvac998/ShoppingCartAPI.git']])
   }
 
@@ -9,15 +9,28 @@ node {
     sh 'echo Send notification'
   }
 
+  stage('SET ENVIRONMENT VARIABLES'){
+    env.BUILD_NUMBER = "${env.BUILD_NUMBER}"
+    env.IMAGE_VERSION = "v_${BUILD_NUMBER}"
+    env.IMAGE_PREFIX = 'codaxy_'
+    env.IMAGE_TAG = getDockerImageTag()
+    env.GIT_BRANCH = getCurrentBranch()
+    env.GIT_COMMIT_HASH = getShortCommitHash()
+    env.GIT_COMMIT_AUTHOR = getCommitAuthorName()
+    env.GIT_COMMIT_MESSAGE = getCommitMessage()
+    env.GIT_COMMIT_AUTHOR_EMAIL = getCommitAuthorEmail()
+    env.GIT_CHANGES = getChangeSet()
+  }
+
   stage('BUILD DOCKER IMAGES') {
     parallel ADMINISTRATION: {
       node {
         label 'dotnet-agent'
       }
-      getBuildStages('administration', 'codaxy_administration', '89-HEAD-943f6ae').call()
+      getBuildStages('administration', 'codaxy_administration', "${env.IMAGE_TAG}").call()
     },
-    test: {
-      getBuildStages('test', , 'codaxy_test', '89-HEAD-943f6ae').call()
+    TEST: {F
+      getBuildStages('test', , 'codaxy_test', "${env.IMAGE_TAG}").call()
     }
   }
 
@@ -40,25 +53,25 @@ def getBuildStages(service, imageName, imageTag) {
   return {
     def oldHash
     def newHash
-    stage('Get old image hash') {
+    stage('GET OLD IMAGE HASH') {
       oldHash = getImageHash("${imageName}:${imageTag}")
       sh "echo ${oldHash}"
     }
-    stage('Build docker image') {
+    stage('BUILD DOCKER IMAGE') {
       sh "docker build -t codaxy_${service}:${imageTag} -f docker/Dockerfile ."
       newHash = getImageHash("${imageName}:${imageTag}")
       sh "echo ${newHash}"
     }
 
     if (oldHash != newHash) {
-      stage('Pack image') {
+      stage('PACK IMAGE') {
         sh "docker save codaxy_${service}:${imageTag} | gzip > ../sp1ne/images/codaxy_${service}:${imageTag}.tar.gz "
       }
-      stage('Deploy image') {
+      stage('DEPLOY IMAGE') {
         sh "Deploying codaxy_${service}:${imageTag}..."
       }
     }else {
-      stage('Deploy skipped') {
+      stage('DEPLOY SKIPPED') {
         echo('There are no changes. Skipping deployment.')
       }
     }
@@ -94,18 +107,18 @@ def getChangeLog() {
 }
 
 def getCurrentBranch () {
-    return sh(
-            script: 'git name-rev --name-only HEAD',
-            returnStdout: true
-    ).trim()
+  return sh(
+          script: 'git name-rev --name-only HEAD',
+          returnStdout: true
+  ).trim()
 }
 
 def getDockerImageTag() {
-    if (env.GIT_BRANCH == 'dev') {
-        return 'dev'
-    }
-    if (env.GIT_BRANCH == 'staging') {
-        return 'uat'
-    }
-    return 'latest'
+  if (env.GIT_BRANCH == 'dev') {
+      return 'dev'
+  }
+  if (env.GIT_BRANCH == 'staging') {
+      return 'uat'
+  }
+  return 'latest'
 }
