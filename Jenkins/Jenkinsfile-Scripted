@@ -70,19 +70,13 @@ node {
       node {
         label 'dotnet-agent'
       }
-      getBuildStages('spine-tmf', true, "NugetSp1neTmf", "TMF_PAT", "TMF_PAT_USERNAME").call()
+      getBuildStages('spine-tmf', true, 'NugetSp1neTmf', 'TMF_PAT', 'TMF_PAT_USERNAME').call()
     },
     AUTOBOOT: {
       node {
         label 'dotnet-agent'
       }
       getBuildStages('autoboot').call()
-    },
-    KEA: {
-      node {
-        label 'dotnet-agent'
-      }
-      getBuildStages('kea').call()
     },
     KEA: {
       node {
@@ -112,7 +106,7 @@ node {
       node {
         label 'dotnet-agent'
       }
-      getBuildStages('nginx', true, "NugetSp1neTmf", "TMF_PAT", "TMF_PAT_USERNAME").call()
+      getBuildStages('nginx', true, 'NugetSp1neTmf', 'TMF_PAT', 'TMF_PAT_USERNAME').call()
     }
   }
 
@@ -152,15 +146,15 @@ def getBuildStages(service, useCredentials = false, credentialsName = '', pwdVar
       }
     }
 
-    if(useCredentials == true){
+    if (useCredentials == true) {
       stage('BUILD DOCKER IMAGE') {
-        withCredentials([usernamePassword(credentialsId: "${credentialsName}", passwordVariable: "${pwdVariable}", usernameVariable: "${usernameVariable}")]){
+        withCredentials([usernamePassword(credentialsId: "${credentialsName}", passwordVariable: "${pwdVariable}", usernameVariable: "${usernameVariable}")]) {
           sh "docker build -t ${imageName}:${env.IMAGE_TAG} --build-arg TMF_PAT_USERNAME=${usernameVariable} --build-arg TMF_PAT=${pwdVariable} -f docker/${service}/Dockerfile ."
           newHash = getImageHash("${imageName}:${env.IMAGE_TAG}")
           sh "echo ${newHash}"
         }
       }
-    }else{
+    }else {
       stage('BUILD DOCKER IMAGE') {
         sh "docker build -t ${imageName}:${env.IMAGE_TAG} -f docker/${service}/Dockerfile ."
         newHash = getImageHash("${imageName}:${env.IMAGE_TAG}")
