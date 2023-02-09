@@ -20,6 +20,8 @@ node {
     env.GIT_COMMIT_MESSAGE = getCommitMessage()
     env.GIT_COMMIT_AUTHOR_EMAIL = getCommitAuthorEmail()
     env.GIT_CHANGES = getChangeSet()
+
+    sh "echo ${env.IMAGE_TAG} ${env.GIT_BRANCH}"
   }
 
   stage('BUILD DOCKER IMAGES') {
