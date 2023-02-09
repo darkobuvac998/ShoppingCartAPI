@@ -1,7 +1,10 @@
 
 node {
   stage('Run parallel') {
-    parallel admin: {
+    parallel ADMINISTRATION: {
+      node {
+        label 'dotnet-agent'
+      }
       buildStagesDynamically('test', '', 'shopping-cart', 'latest').call()
     },
     test: {
