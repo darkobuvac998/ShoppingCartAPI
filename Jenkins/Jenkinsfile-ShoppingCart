@@ -85,7 +85,7 @@ pipeline {
                         }
                     }
                 }
-                createDockerImageBuildStage('Build docker image').call().run()
+                eval(createDockerImageBuildStage('Build docker image').run())
             }
         }
     }
