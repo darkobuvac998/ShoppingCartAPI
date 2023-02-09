@@ -113,8 +113,7 @@ node {
         label 'dotnet-agent'
       }
       getBuildStages('nginx', true, "NugetSp1neTmf", "TMF_PAT", "TMF_PAT_USERNAME").call()
-    },
-
+    }
   }
 
   stage('LIST ALL DOCKER IMAGES') {
