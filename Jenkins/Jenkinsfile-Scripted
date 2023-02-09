@@ -31,12 +31,12 @@ def buildStagesDynamically(service, buildAgent, imageName, imageTag) {
     def newHash
     stage('Get old image hash') {
       oldHash = getImageHash("${imageName}:${imageTag}")
-      sh 'echo $oldHash'
+      sh 'echo ${oldHash}'
     }
     stage('Build docker image') {
-      sh 'docker build -t codaxy_$service:$imageTag -f docker/$service/Dockerfile .'
+      sh 'docker build -t codaxy_$service:$imageTag -f docker/Dockerfile .'
       newHash = getImageHash("${imageName}:${imageTag}")
-      sh 'echo $newHash'
+      sh 'echo ${newHash}'
     }
 
     if (oldHash != newHash) {
