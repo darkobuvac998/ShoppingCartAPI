@@ -5,10 +5,10 @@ node {
       node {
         label 'dotnet-agent'
       }
-      buildStagesDynamically('test', '', 'shopping-cart', 'latest').call()
+      buildStagesDynamically('test', '', 'shopping-cart', '89-HEAD-943f6ae').call()
     },
     test: {
-      buildStagesDynamically('test', '', 'shopping-cart', 'latest').call()
+      buildStagesDynamically('test', '', 'shopping-cart', '89-HEAD-943f6ae').call()
     }
   }
 }
