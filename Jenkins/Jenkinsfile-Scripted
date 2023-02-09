@@ -31,7 +31,10 @@ node {
       }
       getBuildStages('administration', 'codaxy_administration', "${env.IMAGE_TAG}").call()
     },
-    TEST: {F
+    TEST: {
+      node{
+        label 'dotnet-agent'
+      }
       getBuildStages('test', , 'codaxy_test', "${env.IMAGE_TAG}").call()
     }
   }
