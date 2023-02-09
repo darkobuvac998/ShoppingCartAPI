@@ -90,7 +90,7 @@ pipeline {
                         label 'docker-secondary'
                     }
                     stages {
-                        evaluate(createDockerImageBuildStage('Build docker image'))
+                        createDockerImageBuildStage('Build docker image')
                     }
                 }
             }
@@ -114,7 +114,7 @@ pipeline {
 }
 
 def createDockerImageBuildStage(stageName) {
-    def dynamicStage = stage("${stageName}") {
+    stage("${stageName}") {
         steps {
             script {
                 branchName = getCurrentBranch()
@@ -126,8 +126,6 @@ def createDockerImageBuildStage(stageName) {
             }
         }
     }
-
-    return dynamicStage
 }
 
 def keepThisBuild() {
