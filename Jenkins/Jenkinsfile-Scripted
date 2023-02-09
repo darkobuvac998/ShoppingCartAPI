@@ -14,10 +14,10 @@ node {
       node {
         label 'dotnet-agent'
       }
-      getBuildStages('administration', 'shopping-cart', '89-HEAD-943f6ae').call()
+      getBuildStages('administration', 'codaxy_administration', '89-HEAD-943f6ae').call()
     },
     test: {
-      getBuildStages('test', , 'shopping-cart', '89-HEAD-943f6ae').call()
+      getBuildStages('test', , 'codaxy_test', '89-HEAD-943f6ae').call()
     }
   }
 
@@ -27,6 +27,11 @@ node {
     }
 
     sh 'docker image ls | grep codaxy'
+  }
+
+  stage('CLEANUP'){
+    sh 'docker container prune -f'
+    sh 'docker rmi $(docker images --filter "dangling=true" -q --no-trunc)'
   }
 
 }
