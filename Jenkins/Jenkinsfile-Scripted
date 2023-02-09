@@ -1,15 +1,14 @@
 
 node {
-
   stage('GIT CHECKOUT') {
-    checkout scmGit(branches: [[name: 'dev']], submoduleCfg: [], extensions: [[$class: 'LocalBranch', localBranch: "**"]], doGenerateSubmoduleConfigurations: false, userRemoteConfigs: [[credentialsId: 'jenkins-github', url: 'git@github.com:darkobuvac998/ShoppingCartAPI.git']])
+    checkout scmGit(branches: [[name: 'dev']], submoduleCfg: [], extensions: [[$class: 'LocalBranch', localBranch: '**']], doGenerateSubmoduleConfigurations: false, userRemoteConfigs: [[credentialsId: 'jenkins-github', url: 'git@github.com:darkobuvac998/ShoppingCartAPI.git']])
   }
 
-  stage('NOTIFY SLACK'){
+  stage('NOTIFY SLACK') {
     sh 'echo Send notification'
   }
 
-  stage('SET ENVIRONMENT VARIABLES'){
+  stage('SET ENVIRONMENT VARIABLES') {
     env.BUILD_NUMBER = "${env.BUILD_NUMBER}"
     env.IMAGE_VERSION = "v_${BUILD_NUMBER}"
     env.IMAGE_PREFIX = 'codaxy_'
@@ -29,43 +28,44 @@ node {
       node {
         label 'dotnet-agent'
       }
-      getBuildStages('administration', 'codaxy_administration', "${env.IMAGE_TAG}").call()
+      getBuildStages('administration', "${env.IMAGE_TAG}").call()
     },
     TEST: {
-      node{
+      node {
         label 'dotnet-agent'
       }
-      getBuildStages('test', , 'codaxy_test', "${env.IMAGE_TAG}").call()
+      getBuildStages('test', "${env.IMAGE_TAG}").call()
     }
   }
 
-  stage('LIST ALL DOCKER IMAGES'){
-    node{
+  stage('LIST ALL DOCKER IMAGES') {
+    node {
       label 'dotnet-agent'
     }
 
     sh 'docker image ls | grep codaxy'
   }
 
-  stage('CLEANUP'){
+  stage('CLEANUP') {
     sh 'docker container prune -f'
     sh 'docker rmi $(docker images --filter "dangling=true" -q --no-trunc)'
   }
-
 }
 
-def getBuildStages(service, imageName, imageTag) {
+def getBuildStages(service, imageTag) {
   return {
     def oldHash
     def newHash
     def imageExists
 
-    stage('CHECK DOES IMAGE EXISTS'){
+    def imageName = "${env.IMAGE_PREFIX}${service}"
+
+    stage('CHECK DOES IMAGE EXISTS') {
       imageExists = doesImageExists("${imageName}:${imageTag}")
       sh "echo Checkind does ${imageName}${imageTag} exists"
     }
 
-    if(imageExists != ''){
+    if (imageExists != '') {
       stage('GET OLD IMAGE HASH') {
         oldHash = getImageHash("${imageName}:${imageTag}")
         sh "echo ${oldHash}"
@@ -73,17 +73,17 @@ def getBuildStages(service, imageName, imageTag) {
     }
 
     stage('BUILD DOCKER IMAGE') {
-      sh "docker build -t codaxy_${service}:${imageTag} -f docker/Dockerfile ."
+      sh "docker build -t ${imageName}:${imageTag} -f docker/Dockerfile ."
       newHash = getImageHash("${imageName}:${imageTag}")
       sh "echo ${newHash}"
     }
 
     if (oldHash != newHash) {
       stage('PACK IMAGE') {
-        sh "docker save codaxy_${service}:${imageTag} | gzip > ../sp1ne/images/codaxy_${service}:${imageTag}.tar.gz "
+        sh "docker save ${imageName}:${imageTag} | gzip > ../sp1ne/images/${imageName}:${imageTag}.tar.gz "
       }
       stage('DEPLOY IMAGE') {
-        sh "Deploying codaxy_${service}:${imageTag}..."
+        sh "Deploying ${imageName}:${imageTag}..."
       }
     }else {
       stage('DEPLOY SKIPPED') {
@@ -98,30 +98,30 @@ def getImageHash(image) {
 }
 
 def getShortCommitHash() {
-    return sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+  return sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
 }
 
 def getCommitAuthorName() {
-    return sh(returnStdout: true, script: 'git log -1 --pretty=format:"%an"').trim()
+  return sh(returnStdout: true, script: 'git log -1 --pretty=format:"%an"').trim()
 }
 
 def getCommitAuthorEmail() {
-    return sh(returnStdout: true, script: 'git show -s --pretty=%ae').trim()
+  return sh(returnStdout: true, script: 'git show -s --pretty=%ae').trim()
 }
 
 def getCommitMessage() {
-    return sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
+  return sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
 }
 
 def getChangeSet() {
-    return sh(returnStdout: true, script: 'git diff-tree --no-commit-id --name-status -r HEAD').trim()
+  return sh(returnStdout: true, script: 'git diff-tree --no-commit-id --name-status -r HEAD').trim()
 }
 
 def getChangeLog() {
-    return sh(returnStdout: true, script: "git log --date=short --pretty=format:'%ad %aN <%ae> %n%n%x09* %s%d%n%b'").trim()
+  return sh(returnStdout: true, script: "git log --date=short --pretty=format:'%ad %aN <%ae> %n%n%x09* %s%d%n%b'").trim()
 }
 
-def doesImageExists(imageName){
+def doesImageExists(imageName) {
   return sh(returnStdout: true, script: "docker images -q ${imageName}").trim()
 }
 
@@ -134,10 +134,10 @@ def getCurrentBranch () {
 
 def getDockerImageTag() {
   if (env.GIT_BRANCH == 'dev') {
-      return 'dev'
+    return 'dev'
   }
   if (env.GIT_BRANCH == 'staging') {
-      return 'uat'
+    return 'uat'
   }
   return 'latest'
 }
