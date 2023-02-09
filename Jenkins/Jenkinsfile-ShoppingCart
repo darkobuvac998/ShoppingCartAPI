@@ -90,7 +90,7 @@ pipeline {
                         label 'docker-secondary'
                     }
                     stages {
-                        evaluate(createDockerImageBuildStage('Build docker image').run())
+                        evaluate(createDockerImageBuildStage('Build docker image'))
                     }
                 }
             }
@@ -114,17 +114,15 @@ pipeline {
 }
 
 def createDockerImageBuildStage(stageName) {
-    return {
-        stage("${stageName}") {
-            steps {
-                script {
-                    branchName = getCurrentBranch()
-                    shortCommitHash = getShortCommitHash()
-                    IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + '-' + shortCommitHash
-                    sh 'docker ps'
-                    sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
-                    sh 'docker image ls'
-                }
+    stage("${stageName}") {
+        steps {
+            script {
+                branchName = getCurrentBranch()
+                shortCommitHash = getShortCommitHash()
+                IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + '-' + shortCommitHash
+                sh 'docker ps'
+                sh "docker build -t shopping-cart:${IMAGE_VERSION} -f docker/Dockerfile ."
+                sh 'docker image ls'
             }
         }
     }
