@@ -22,13 +22,11 @@ def buildStagesDynamically(service, buildAgent, imageName, imageTag) {
     stage('Get old image hash') {
       def oldHashName = "OLD_HASH_${service}".toUpperCase()
       env[oldHashName] = getImageHash("${imageName}:${imageTag}")
-      sh "echo ${env[oldHashName]}"
     }
     stage('Build docker image') {
       def newHashName = "NEW_HASH_${service}".toUpperCase()
       sh "docker build -t codaxy_${service}:${imageTag} -f docker/Dockerfile ."
       env[newHashName] = getImageHash("${imageName}:${imageTag}")
-      sh "echo ${env[newHashName]}"
     }
 
     if (env[oldHashName] != env[newHashName]) {
