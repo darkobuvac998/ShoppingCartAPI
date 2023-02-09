@@ -38,6 +38,10 @@ def buildStagesDynamically(service, buildAgent, imageName, imageTag) {
       stage('Deploy image') {
         sh "Deploying codaxy_${service}:${imageTag}..."
       }
+    }else {
+      stage('Deploy skipped') {
+        sh 'There are no changes. Skipping the deployment!'
+      }
     }
   }
 }
