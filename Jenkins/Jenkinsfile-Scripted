@@ -1,6 +1,20 @@
 
 node {
-  buildStageDynamically('Test stage').call()
+  stages {
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+    buildStageDynamically('Test stage').call()
+  }
 }
 
 def buildStageDynamically(stageName) {
