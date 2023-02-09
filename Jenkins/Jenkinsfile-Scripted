@@ -17,32 +17,21 @@ node {
   }
 }
 
-def buildStageDynamically(stageName) {
-  return {
-    stage("${stageName}") {
-      node {
-        label 'dotnet-agent'
-      }
-
-      sh 'echo Hello'
-    }
-  }
-}
-
 def buildStagesDynamically(service, buildAgent, imageName, imageTag) {
   return {
     stage('Get old image hash') {
-      env.oldHash = getImageHash("${imageName}:${imageTag}")
-      sh "echo ${env.oldHash}"
+      def oldHashName = "OLD_HASH_${service}".toUpper()
+      env[oldHashName] = getImageHash("${imageName}:${imageTag}")
+      sh "echo ${env[oldHashName]}"
     }
     stage('Build docker image') {
-      sh 'pwd'
+      def newHashName = "NEW_HASH_${service}".toUppe()
       sh "docker build -t codaxy_${service}:${imageTag} -f docker/Dockerfile ."
-      env.newHash = getImageHash("${imageName}:${imageTag}")
-      sh "echo ${env.newHash}"
+      env[newHashName] = getImageHash("${imageName}:${imageTag}")
+      sh "echo ${env[newHashName]}"
     }
 
-    if (env.oldHash != env.newHash) {
+    if (env[oldHashName] != env[newHashName]) {
       stage('Pack image') {
         sh "docker save codaxy_${service}:${imageTag} | gzip > ../sp1ne/images/codaxy_${service}:${imageTag}.tar.gz "
       }
