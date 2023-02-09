@@ -55,10 +55,19 @@ def getBuildStages(service, imageName, imageTag) {
   return {
     def oldHash
     def newHash
-    stage('GET OLD IMAGE HASH') {
-      oldHash = getImageHash("${imageName}:${imageTag}")
-      sh "echo ${oldHash}"
+    def doesImageExists
+
+    stage('CHECK DOES IMAGE EXISTS'){
+      doesImageExists = doesImageExists("${imageName}${imageTag}")
     }
+
+    if(doesImageExists != ''){
+      stage('GET OLD IMAGE HASH') {
+        oldHash = getImageHash("${imageName}:${imageTag}")
+        sh "echo ${oldHash}"
+      }
+    }
+
     stage('BUILD DOCKER IMAGE') {
       sh "docker build -t codaxy_${service}:${imageTag} -f docker/Dockerfile ."
       newHash = getImageHash("${imageName}:${imageTag}")
@@ -106,6 +115,10 @@ def getChangeSet() {
 
 def getChangeLog() {
     return sh(returnStdout: true, script: "git log --date=short --pretty=format:'%ad %aN <%ae> %n%n%x09* %s%d%n%b'").trim()
+}
+
+def doesImageExists(imageName){
+  return sh(returnStdout: true, script: "docker images -q ${imageName}").trim()
 }
 
 def getCurrentBranch () {
