@@ -90,7 +90,7 @@ pipeline {
                         label 'docker-secondary'
                     }
                     stages {
-                        evaluate(createDockerImageBuildStage('Build docker image'))
+                        evaluate(createDockerImageBuildStage('Build docker image').run())
                     }
                 }
             }
