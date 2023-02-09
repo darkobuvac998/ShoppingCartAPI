@@ -90,7 +90,7 @@ pipeline {
                         label 'docker-secondary'
                     }
                     stages {
-                        createDockerImageBuildStage('Build Docker Image').call()
+                        createDockerImageBuildStage('Build Docker Image').run()
                     }
                 }
             }
@@ -114,8 +114,7 @@ pipeline {
 }
 
 def createDockerImageBuildStage(stageName) {
-    return {
-        stage("${stageName}") {
+    stage("${stageName}") {
             steps {
                 script {
                     branchName = getCurrentBranch()
@@ -126,7 +125,6 @@ def createDockerImageBuildStage(stageName) {
                     sh 'docker image ls'
                 }
             }
-        }
     }
 }
 
