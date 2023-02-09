@@ -1,21 +1,9 @@
 
 node {
     stage('Run parallel') {
-      parallel {
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-        buildStageDynamically('Test stage').call()
-      }
+      parallel
+        Administration: {buildStageDynamically('Admin').call()},
+        TMF: {buildStageDynamically('TMF').call()}
     }
 }
 
@@ -30,3 +18,4 @@ def buildStageDynamically(stageName) {
     }
   }
 }
+
