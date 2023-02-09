@@ -55,14 +55,14 @@ def getBuildStages(service, imageName, imageTag) {
   return {
     def oldHash
     def newHash
-    def doesImageExists
+    def imageExists
 
     stage('CHECK DOES IMAGE EXISTS'){
-      doesImageExists = doesImageExists("${imageName}${imageTag}")
+      imageExists = doesImageExists("${imageName}${imageTag}")
       sh "echo Checkind does ${imageName}${imageTag} exists"
     }
 
-    if(doesImageExists != ''){
+    if(imageExists != ''){
       stage('GET OLD IMAGE HASH') {
         oldHash = getImageHash("${imageName}:${imageTag}")
         sh "echo ${oldHash}"
