@@ -29,20 +29,20 @@ def buildStagesDynamically(service, buildAgent, imageName, imageTag) {
   return {
     stage('Get old image hash') {
       env.oldHash = getImageHash("${imageName}:${imageTag}")
-      sh 'echo ${oldHash}'
+      sh "echo ${env.oldHash}"
     }
     stage('Build docker image') {
-      sh 'docker build -t codaxy_${service}:${imageTag} -f docker/Dockerfile .'
+      sh "docker build -t codaxy_${service}:${imageTag} -f docker/Dockerfile ."
       env.newHash = getImageHash("${imageName}:${imageTag}")
-      sh 'echo ${newHash}'
+      sh "echo ${env.newHash}"
     }
 
     if (env.oldHash != env.newHash) {
-      stage('Pack image') {
-        sh 'docker save codaxy_${service}:${imageTag} | gzip > ../sp1ne/images/codaxy_${service}:${imageTag}.tar.gz '
+      stage("Pack image") {
+        sh "docker save codaxy_${service}:${imageTag} | gzip > ../sp1ne/images/codaxy_${service}:${imageTag}.tar.gz "
       }
-      stage('Deploy image') {
-        sh 'Deploying codaxy_${service}:${imageTag}...'
+      stage("Deploy image") {
+        sh "Deploying codaxy_${service}:${imageTag}..."
       }
     }
   }
