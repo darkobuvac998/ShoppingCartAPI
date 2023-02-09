@@ -136,7 +136,7 @@ def getCurrentBranch () {
 }
 
 def getImagesToRemove(){
-  return sh(returnStdout: true, script: "docker images --filter "dangling=true" -q --no-trunc").trim()
+  return sh(returnStdout: true, script: "docker images --filter \"dangling=true\" -q --no-trunc").trim()
 }
 
 def getDockerImageTag() {
