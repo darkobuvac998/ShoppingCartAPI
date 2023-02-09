@@ -2,7 +2,7 @@
 node {
 
   stage('GIT CHECKOUT') {
-    checkout scmGit(branches: [[name: 'dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins-github', url: 'git@github.com:darkobuvac998/ShoppingCartAPI.git']])
+    checkout scmGit(branches: [[name: 'dev']], submoduleCfg: [], extensions: [[$class: 'LocalBranch', localBranch: "**"]], doGenerateSubmoduleConfigurations: false, userRemoteConfigs: [[credentialsId: 'jenkins-github', url: 'git@github.com:darkobuvac998/ShoppingCartAPI.git']])
   }
 
   stage('NOTIFY SLACK'){
