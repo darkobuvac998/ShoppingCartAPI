@@ -90,13 +90,7 @@ pipeline {
                         label 'docker-secondary'
                     }
                     stages {
-                        stage('MAIN STAGE') {
-                            steps {
-                                script {
-                                    createDockerImageBuildStage('BUILD DOCKER IMAGE')
-                                }
-                            }
-                        }
+                        createDockerImageBuildStage("Build Docker Image").call()
                     }
                 }
             }
