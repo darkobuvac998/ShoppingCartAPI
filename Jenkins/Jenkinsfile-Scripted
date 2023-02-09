@@ -31,7 +31,7 @@ def buildStagesDynamically(service, buildAgent, imageName, imageTag) {
       sh "echo ${newHash}"
     }
 
-    if (eoldHash != newHash) {
+    if (oldHash != newHash) {
       stage('Pack image') {
         sh "docker save codaxy_${service}:${imageTag} | gzip > ../sp1ne/images/codaxy_${service}:${imageTag}.tar.gz "
       }
