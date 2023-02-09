@@ -1,18 +1,22 @@
 
 node {
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
-    buildStageDynamically('Test stage').call()
+    stage('Run parallel') {
+      parallel {
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+        buildStageDynamically('Test stage').call()
+      }
+    }
 }
 
 def buildStageDynamically(stageName) {
