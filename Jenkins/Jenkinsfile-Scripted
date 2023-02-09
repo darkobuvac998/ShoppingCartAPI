@@ -10,11 +10,7 @@ def buildStageDynamically(stageName) {
         label 'dotnet-agent'
       }
 
-      steps {
-        script {
-          sh 'Hello'
-        }
-      }
+      sh 'Hello'
     }
   }
 }
