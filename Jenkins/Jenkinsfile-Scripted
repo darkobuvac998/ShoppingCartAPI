@@ -39,7 +39,7 @@ node {
     }
   }catch (err) {
     stage('LOG BUILD ERROR') {
-      sh "Failed: ${err}"
+      sh "echo Failed: ${err}"
       env.BUILD_STATUS = 'FAILURE'
     }
   }
