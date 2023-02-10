@@ -54,9 +54,7 @@ node {
   stage('PUBLISH REPORTS') {
     def reportName = "SP1NE-${env.IMAGE_TAG}-BUILD_${env.BUILD_NUMBER}_${new Date().format('dd-MM-yyyy HH:mm:ss')}"
 
-    sh "chmod -R 777 ./Jenkins"
-    sh "pwd"
-    sh "./Jenkins/generate-html-report.sh"
+    sh "./Jenkins/generate-html-report.sh ${currentBuild.result} ${env.BUILD_NUMBER} > ./reports/index.html"
 
     publishHTML(
       target : [allowMissing: false,
@@ -64,7 +62,7 @@ node {
                 keepAll: true,
                 reportDir: 'reports',
                 reportFiles: 'index.html',
-                reportName: "buildreport",
+                reportName: 'buildreport',
                 reportTitles: "SP1NE-${env.IMAGE_TAG}-BUILD_${env.BUILD_NUMBER}"
               ]
     )
