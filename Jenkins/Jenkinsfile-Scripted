@@ -40,7 +40,7 @@ node {
   }catch (err) {
     stage('LOG BUILD ERROR') {
       sh "Failed: ${err}"
-      env.BUILD_STATUS = 'FAILED'
+      env.BUILD_STATUS = 'FAILURE'
     }
   }
   finally {
@@ -55,7 +55,7 @@ node {
     stage('PUBLISH REPORTS') {
       sh 'chmod -R 777 ./Jenkins'
       sh 'chmod -R 777 ./reports'
-      sh "./Jenkins/generate-html-report.sh ${env.BUILD_NUMBER} ${currentBuild.currentResult} > ./reports/index.html"
+      sh "./Jenkins/generate-html-report.sh ${currentBuild.currentResult} > ./reports/index.html"
 
       publishHTML(
       target : [allowMissing: false,
@@ -80,7 +80,7 @@ node {
       }
     }
 
-    if (env.BUILD_STATUS == 'FAILED') {
+    if (env.BUILD_STATUS == 'FAILURE') {
       stage('TERMINATE') {
         error('BUILD Failed')
       }
