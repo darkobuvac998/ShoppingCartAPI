@@ -40,6 +40,7 @@ node {
   }catch (err) {
     stage('NOTIFY SLACK') {
       sh "echo ${err}"
+      env.BUILD_STATUS = 'FAILED'
     }
   }
   finally {
@@ -76,6 +77,12 @@ node {
       stage('CLEANUP') {
         sh 'docker container prune -f'
         sh 'docker rmi $(docker images --filter "dangling=true" -q --no-trunc)'
+      }
+    }
+
+    if (env.BUILD_STATUS == 'FAILED') {
+      stage('TERMINATE') {
+        error('BUILD Failed')
       }
     }
   }
