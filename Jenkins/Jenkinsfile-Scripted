@@ -34,12 +34,6 @@ node {
         label 'dotnet-agent'
       }
       getBuildStages('conductor').call()
-    },
-    INFOBLOX: {
-      node {
-        label 'dotnet-agent'
-      }
-      getBuildStages('infoblox').call()
     }
   }
 
@@ -54,8 +48,8 @@ node {
   stage('PUBLISH REPORTS') {
     def reportName = "SP1NE-${env.IMAGE_TAG}-BUILD_${env.BUILD_NUMBER}_${new Date().format('dd-MM-yyyy HH:mm:ss')}"
 
-    sh "chmod -R 777 ./Jenkins"
-    sh "chmod -R 777 ./reports"
+    sh 'chmod -R 777 ./Jenkins'
+    sh 'chmod -R 777 ./reports'
     sh "./Jenkins/generate-html-report.sh ${env.BUILD_NUMBER} ${currentBuild.result} > ./reports/index.html"
 
     publishHTML(
@@ -112,7 +106,7 @@ def getBuildStages(service, useCredentials = false, credentialsName = '', pwdVar
       }
     }else {
       stage('BUILD DOCKER IMAGE') {
-        sh "docker build -t ${imageName}:${env.IMAGE_TAG} -f docker/Dockerfile ."
+        sh "docker build -t ${imageName}:${env.IMAGE_TAG} -f dockeer/Dockerfile ."
         newHash = getImageHash("${imageName}:${env.IMAGE_TAG}")
         sh "echo ${newHash}"
       }
