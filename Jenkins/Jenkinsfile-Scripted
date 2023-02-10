@@ -60,7 +60,7 @@ node {
                 keepAll: true,
                 reportDir: 'reports',
                 reportFiles: 'index.html',
-                reportName: "${reportName}",
+                reportName: "buildreport",
                 reportTitles: "SP1NE-${env.IMAGE_TAG}-BUILD_${env.BUILD_NUMBER}"
               ]
     )
