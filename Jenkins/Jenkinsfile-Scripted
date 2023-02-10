@@ -56,7 +56,7 @@ node {
 
     sh "chmod -R 777 ./Jenkins"
     sh "chmod -R 777 ./reports"
-    sh "./Jenkins/generate-html-report.sh ${currentBuild.result} ${env.BUILD_NUMBER} > ./reports/index.html"
+    sh "./Jenkins/generate-html-report.sh ${env.BUILD_NUMBER} ${currentBuild.result} > ./reports/index.html"
 
     publishHTML(
       target : [allowMissing: false,
