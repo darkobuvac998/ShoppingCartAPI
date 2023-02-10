@@ -54,7 +54,7 @@ node {
     stage('PUBLISH REPORTS') {
       sh 'chmod -R 777 ./Jenkins'
       sh 'chmod -R 777 ./reports'
-      sh "./Jenkins/generate-html-report.sh ${env.BUILD_NUMBER} ${currentBuild.result} > ./reports/index.html"
+      sh "./Jenkins/generate-html-report.sh ${env.BUILD_NUMBER} ${currentBuild.currentResult} > ./reports/index.html"
 
       publishHTML(
       target : [allowMissing: false,
@@ -69,7 +69,7 @@ node {
     }
 
     stage('NOTIFY SLACK') {
-      sh "echo BUILD ${currentBuild.result} AT: ${new Date().format('dd-MM-yyyy HH:mm:ss')}"
+      sh "echo BUILD ${currentBuild.currentResult} AT: ${new Date().format('dd-MM-yyyy HH:mm:ss')}"
     }
 
     if (getImagesToRemove() != '') {
