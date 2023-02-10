@@ -38,6 +38,9 @@ node {
     }
     }
   }catch (err) {
+    stage('NOTIFY SLACK') {
+      sh "echo ${err}"
+    }
   }
   finally {
     stage('LIST ALL DOCKER IMAGES') {
