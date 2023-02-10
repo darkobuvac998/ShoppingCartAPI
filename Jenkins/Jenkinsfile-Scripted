@@ -126,6 +126,7 @@ def getBuildStages(service, useCredentials = false, credentialsName = '', pwdVar
 
     if (oldHash != newHash) {
       stage('PACK IMAGE') {
+        sh "./Jenkins/create-image-folder.sh ./images/${env.IMAGE_TAG}"
         sh "docker save ${imageName}:${env.IMAGE_TAG} | gzip > ../images/${env.IMAGE_TAG}/${imageName}:${env.IMAGE_TAG}.tar.gz"
       }
       stage('DEPLOY IMAGE') {
