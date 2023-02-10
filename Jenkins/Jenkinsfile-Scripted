@@ -38,8 +38,8 @@ node {
     }
     }
   }catch (err) {
-    stage('NOTIFY SLACK') {
-      sh "echo ${err}"
+    stage('LOG BUILD ERROR') {
+      sh "Failed: ${err}"
       env.BUILD_STATUS = 'FAILED'
     }
   }
@@ -118,7 +118,7 @@ def getBuildStages(service, useCredentials = false, credentialsName = '', pwdVar
       }
     }else {
       stage('BUILD DOCKER IMAGE') {
-        sh "docker build -t ${imageName}:${env.IMAGE_TAG} -f dockeer/Dockerfile ."
+        sh "docker build -t ${imageName}:${env.IMAGE_TAG} -f docker/Dockerfile ."
         newHash = getImageHash("${imageName}:${env.IMAGE_TAG}")
         sh "echo ${newHash}"
       }
