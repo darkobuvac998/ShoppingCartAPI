@@ -54,7 +54,8 @@ node {
   stage('PUBLISH REPORTS') {
     def reportName = "SP1NE-${env.IMAGE_TAG}-BUILD_${env.BUILD_NUMBER}_${new Date().format('dd-MM-yyyy HH:mm:ss')}"
 
-    sh "./generate-html-report.sh"
+    sh "pwd"
+    sh "./Jenkins/generate-html-report.sh"
 
     publishHTML(
       target : [allowMissing: false,
